@@ -1,5 +1,9 @@
 import Vector from '../math/vector.js'
 
+/**
+ * the util used to transform the coordinate 
+ */
+
 function c2s(vec){
     let sx = vec.x + innerWidth / 2;
     let sy = innerHeight / 2 - vec.y;

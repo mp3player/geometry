@@ -38,8 +38,15 @@ export default class Painter {
     }
     render(){
         this.shapes.forEach(d => {
-            console.log(d)
             d.render(this.pen);
         })
+    }
+    loopRender(){
+        let a = () => {
+            requestAnimationFrame(a);
+            this.pen.clearRect(0,0,innerWidth,innerHeight);
+            this.render();
+        }
+        a();
     }
 }

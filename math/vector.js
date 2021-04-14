@@ -11,6 +11,9 @@ export default class Vector {
     sub(vec){
         return new Vector(this.x - vec.x , this.y - vec.y);
     }
+    mul(vec){
+        return new Vector(this.x * vec.x , this.y * vec.y);
+    }
     length(){
         return Math.hypot(this.x,this.y);
     }

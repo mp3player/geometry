@@ -1,4 +1,8 @@
+import { Join } from "../constant/ConstantJoin.js";
+
 /**
+ * common drawing properties
+ * 
  * background 
  *  
  * border
@@ -15,6 +19,6 @@ export default class Style {
         this.borderColor = opt.borderColor || null ;
         this.borderRadius = opt.borderRadius || 0;
         this.borderWidth = opt.borderWidth || 1;
-        this.smooth = opt.smooth || true;
+        this.join = opt.join || Join.MITER;
     }
 }

@@ -24,11 +24,16 @@
         import Line from './shape/line.js'
         import Vector from './math/vector.js'
 
+        import Axes from './util/axes.js'
+        import Grid from './util/grid.js'
+
+        import {Color} from './constant/ConstantColor.js'
+
         let painter = new Painter(canvas);
 
         let circle = new Circle(0,0,100,{
-            background:'purple',
-            borderColor:'red',
+            background:Color.BROWN,
+            borderColor:Color.RED,
             borderWidth:20
         });
         let line = new Line([
@@ -36,27 +41,34 @@
             new Vector(100,100),
             new Vector(200,100),
         ],{
-            borderColor:'purple',
+            borderColor:Color.PURPLE,
             borderWidth : 10
         });
 
         let poly = new Polygon([
+            new Vector(0,0),
+            new Vector(100,0),
             new Vector(100,100),
-            new Vector(200,200),
-            new Vector(300,400),
         ],{
             borderWidth:20,
-            background:'red',
-            borderColor : 'green',
+            background:Color.RED,
+            borderColor : Color.PURPLE,
         })
 
-        painter.add(line);
-        
-        painter.add(circle);
+        let axes = new Axes(Color.RED,Color.GREEN);
+        let grid = new Grid(100,100);
 
+        painter.add(grid);
+        painter.add(axes);
+
+        circle.translate(100,100);
         painter.add(poly);
-
-        painter.render();
+        painter.add(circle);
+        
+        painter.loopRender();
+        // setInterval(() => {
+        //     poly.center.x += 1;
+        // },100)
 
       
     </script>

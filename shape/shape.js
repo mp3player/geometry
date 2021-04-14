@@ -4,9 +4,11 @@ import Transform from '../util/transform.js'
 
 export default class Shape {
     constructor(props){
-        this.center = new Vector(0,0);
+        this.offset = new Vector(0,0);
         this.scale = new Vector(1,1);
+        this.rotation = 0;
         this.props = new Style(props);
+        this.index = 0;
         this.T = Transform;
     }
     setProps(pen){
@@ -16,6 +18,8 @@ export default class Shape {
         pen.fillStyle = props.background;
         pen.strokeStyle = props.borderColor;
         pen.lineWidth = props.borderWidth;
+        pen.lineCap = 'round';
+        pen.lineJoin = "round";
     }
     endClose(pen){
         let props = this.props;
@@ -41,15 +45,16 @@ export default class Shape {
             pen.fill();
             pen.closePath();
         }
+
         pen.restore();
     }
-    translate(t){
-
+    translate(x,y){
+        this.offset = this.offset.add(new Vector(x,y));
     }
     rotate(r){
-
+        this.rotation += r;
     }
-    scale(s){
-
+    render(pen){
+        
     }
 }
