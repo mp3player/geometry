@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{margin:0;padding:0;}
+        canvas{
+            position:absolute;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script type="module">
+        import Express from './collection/express.js'
+        import Stack from './collection/stack.js'
+
+        import Painter from './shape/painter.js'
+        import Circle from './shape/circle.js'
+        import Polygon from './shape/polygon.js'
+        import Line from './shape/line.js'
+        import Vector from './math/vector.js'
+
+        let painter = new Painter(canvas);
+
+        let circle = new Circle(0,0,100,{
+            background:'purple',
+            borderColor:'red',
+            borderWidth:20
+        });
+        let line = new Line([
+            new Vector(0,0),
+            new Vector(100,100),
+            new Vector(200,100),
+        ],{
+            borderColor:'purple',
+            borderWidth : 10
+        });
+
+        let poly = new Polygon([
+            new Vector(100,100),
+            new Vector(200,200),
+            new Vector(300,400),
+        ],{
+            borderWidth:20,
+            background:'red',
+            borderColor : 'green',
+        })
+
+        painter.add(line);
+        
+        painter.add(circle);
+
+        painter.add(poly);
+
+        painter.render();
+
+      
+    </script>
+</body>
+</html>
