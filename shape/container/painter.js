@@ -1,5 +1,5 @@
-import Vector from "../math/vector.js";
-import Queue from '../collection/queue.js'
+import Vector from "../../math/vector.js";
+import Queue from '../../collection/queue.js'
 
 export default class Painter {
     constructor(canvas){

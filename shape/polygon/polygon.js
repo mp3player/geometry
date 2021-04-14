@@ -1,4 +1,4 @@
-import Line from "./line.js";
+import Line from "../path/line.js";
 
 export default class Polygon extends Line {
     render(pen){

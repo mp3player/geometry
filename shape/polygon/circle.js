@@ -1,5 +1,5 @@
-import Shape from "./shape.js";
-import Vector from "../math/vector.js";
+import Shape from "../shape.js";
+import Vector from "../../math/vector.js";
 
 export default class Circle extends Shape {
     constructor(x,y,r,props){
