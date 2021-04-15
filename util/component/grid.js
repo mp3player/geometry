@@ -16,7 +16,7 @@ export default class Grid extends Helper {
 
         //x axis
         pen.save();
-        pen.lineWidth =2;
+        pen.lineWidth = Math.sqrt(zoom);
         pen.strokeStyle = Color.XAXES;
         pen.beginPath();
 
@@ -36,7 +36,7 @@ export default class Grid extends Helper {
 
         //y axis
         pen.save();
-        pen.lineWidth = 2;
+        pen.lineWidth = Math.sqrt(zoom);
         pen.beginPath();
         pen.strokeStyle = Color.YAXES;
 

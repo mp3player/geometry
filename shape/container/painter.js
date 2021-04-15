@@ -53,7 +53,10 @@ export default class Painter extends EventListener {
             console.log(this.zoom)
         })
         document.addEventListener('click',(e) => {
-
+            // console.log(e)
+            let mouse = new Vector(e.x,e.y);
+            let p = this.s2c(mouse);
+            console.log(p);
         })
 
     }
