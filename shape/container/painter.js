@@ -58,7 +58,6 @@ export default class Painter extends EventListener {
             let p = this.s2c(mouse);
             console.log(p);
         })
-
     }
     c2s(vec){
         let sx = vec.x * this.zoom + innerWidth / 2 + this.origin.x ;
