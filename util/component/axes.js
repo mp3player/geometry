@@ -8,4 +8,7 @@ export default class Axes{
         this.cy = cy;
         
     }
+    render(pen,origin){
+        
+    }
 }

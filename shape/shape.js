@@ -1,3 +1,4 @@
+import { Join } from "../constant/ConstantJoin.js";
 import Vector from "../math/vector.js";
 import Style from "../util/style.js";
 
@@ -16,8 +17,8 @@ export default class Shape {
         pen.fillStyle = props.background;
         pen.strokeStyle = props.borderColor;
         pen.lineWidth = props.borderWidth;
-        pen.lineCap = 'round';
-        pen.lineJoin = "round";
+        pen.lineCap = Join.ROUND;
+        pen.lineJoin = Join.ROUND;
     }
     endClose(pen){
         let props = this.props;

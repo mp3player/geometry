@@ -8,7 +8,7 @@ export default class Grid {
         this.sy = sy;
 
     }
-    render(pen){
+    render(pen,origin){
         
     }
 }

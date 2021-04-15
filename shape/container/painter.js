@@ -2,6 +2,8 @@ import Vector from "../../math/vector.js";
 import Queue from '../../collection/queue.js'
 import EventListener from "../../event/EventListener.js";
 import Transform from '../../util/transform.js'
+import Shape from "../shape.js";
+import { ShapeType } from "../../constant/ConstantShape.js";
 
 export default class Painter extends EventListener {
     constructor(canvas){
@@ -12,6 +14,7 @@ export default class Painter extends EventListener {
         this.canvas.height = innerHeight;
         this.pen = this.canvas.getContext('2d');
         this.shapes = new Queue();
+        this.components = new Queue();
 
         this.init();
     }
@@ -44,7 +47,10 @@ export default class Painter extends EventListener {
 
     }
     add(shape){
-        this.shapes.push(shape);
+        if(shape instanceof Shape)
+            this.shapes.push(shape);
+        else
+            this.components.push(shape)
     }
     getWidth(){
         return this.canvas.width;
@@ -77,7 +83,7 @@ export default class Painter extends EventListener {
         this.pen.clearRect(0,0,innerWidth,innerHeight);
         this.shapes.forEach(d => {
             switch(d.type){
-                case 'line':{
+                case ShapeType.LINE:{
                     d.setProps(pen);
                     let v = T.c2s(d.points[0].add(origin)).add(d.offset);
                     pen.moveTo(v.x,v.y);
@@ -88,7 +94,7 @@ export default class Painter extends EventListener {
                     d.endProps(pen);
                 }break;
 
-                case 'circle' : {
+                case ShapeType.CIRCLE : {
                     let v = T.c2s(d.pos.add(origin)).add(d.offset);
 
                     d.setProps(pen);
@@ -97,7 +103,7 @@ export default class Painter extends EventListener {
 
                 }break;
 
-                case 'polygon' : {
+                case ShapeType.POLYGON : {
                     d.setProps(pen);
                     let v = T.c2s(d.points[0].add(origin)).add(d.offset);
                     pen.moveTo(v.x,v.y);
@@ -108,6 +114,9 @@ export default class Painter extends EventListener {
                     d.endClose(pen);
                 }
             }
+        })
+        this.components.forEach(d => {
+            d.render(pen,this.origin);
         })
     }
     loopRender(){
