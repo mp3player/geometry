@@ -1,6 +1,3 @@
-import { Color } from "../../constant/ConstantColor.js";
-import Vector from "../../math/vector.js";
-import line from "../../shape/path/line.js";
 import T from '../transform.js'
 import Helper from "./helper.js";
 

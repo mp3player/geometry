@@ -6,7 +6,8 @@ const ShapeType = {
     CURVE       :   'curve',
     BEZIERCURVE :   'bezierCurve',
     RECTANGLE   :   'rectangle',
-    FUNCTION    :   'fn'
+    FUNCTION    :   'fn',
+    HELPER      :   'helper'
 }
 
 export {ShapeType}

@@ -1,6 +1,4 @@
 import Stack from "./stack.js";
-import {ShapeType} from '../../constant/ConstantShape.js'
-
 export default class Express extends Shape {
     constructor(exp,l,r){
         this.exp = exp;
@@ -49,8 +47,6 @@ export default class Express extends Shape {
     }
     //calculate the expression
     getVal(){
-        console.log(this.exp);
-
         let exp = this.exp;
         let num = new Stack();
         let ope = new Stack();

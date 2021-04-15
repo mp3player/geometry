@@ -21,6 +21,7 @@
         import Painter from './shape/container/painter.js'
         import Circle from './shape/polygon/circle.js'
         import Polygon from './shape/polygon/polygon.js'
+        import Rectange from './shape/polygon/rectangle.js'
         import Line from './shape/path/line.js'
         import Vector from './math/vector.js'
 
@@ -55,12 +56,17 @@
             borderColor:'red'
         })
 
+        let rect = new Rectange(100,-100,-300,100,{
+            background:'red'
+        })
+
         let axes = new Axes(Color.RED,Color.GREEN);
-        let grid = new Grid(100,100);
+        let grid = new Grid(10,10);
 
         painter.add(grid);
         painter.add(axes);
         painter.add(line);
+        painter.add(rect);
 
         poly.translate(-100,0);
         circle.translate(100,100);

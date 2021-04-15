@@ -1,9 +1,6 @@
-import { Color } from "../../constant/ConstantColor.js";
-import Vector from "../../math/vector.js";
-import line from "../../shape/path/line.js";
-
-import T from '../transform.js'
 import Helper from "./helper.js";
+import T from '../transform.js';
+import {Color} from '../../constant/ConstantColor.js'
 
 export default class Grid extends Helper {
     constructor(sx,sy){
@@ -13,6 +10,47 @@ export default class Grid extends Helper {
 
     }
     render(pen,origin){
-        
+        let o = T.c2s(origin);
+
+        //x axis
+        pen.save();
+        pen.lineWidth =2;
+        pen.strokeStyle = Color.XAXES;
+        pen.beginPath();
+
+        for(let i=o.y;i<innerHeight;i+=this.sy){  
+            pen.moveTo(0,i);
+            pen.lineTo(innerWidth,i);
+        }
+
+        for(let i=o.y;i>0;i-=this.sy){
+            pen.moveTo(0,i);
+            pen.lineTo(innerWidth,i);
+            
+        }
+        pen.stroke();
+        pen.closePath();
+        pen.restore();
+
+        //y axis
+        pen.save();
+        pen.lineWidth = 2;
+        pen.beginPath();
+        pen.strokeStyle = Color.YAXES;
+
+        for(let i=o.x;i<innerWidth;i+=this.sx){
+            pen.moveTo(i,0);
+            pen.lineTo(i,innerHeight);
+        }
+
+        for(let i=o.x;i>0;i-=this.sx){
+            pen.moveTo(i,0);
+            pen.lineTo(i,innerHeight);
+            
+        }
+        pen.stroke();
+        pen.closePath();
+        pen.restore();
+
     }
 }

@@ -1,3 +1,5 @@
+import Vector from "./vector.js";
+
 export default class Complex{
     constructor(r,i){
         this.r = r;
@@ -26,5 +28,8 @@ export default class Complex{
     }
     div(c){
         return this.mul(c.adjoint()).scale(1 / c.length());
+    }
+    toVector(){
+        return new Vector(this.r,this.i);
     }
 }

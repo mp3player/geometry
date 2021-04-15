@@ -9,7 +9,7 @@ import Helper from "../../util/component/helper.js";
 export default class Painter extends EventListener {
     constructor(canvas){
         super();
-        this.center = new Vector(0,0);
+        this.origin = new Vector(0,0);
         this.zoom = 1;
         this.canvas = canvas;
         this.canvas.width = innerWidth;
@@ -41,8 +41,8 @@ export default class Painter extends EventListener {
             let current = new Vector(e.x,e.y);
             let offset = current.sub(this.mouse);
             this.mouse = current;
-            this.center.x += offset.x;
-            this.center.y -= offset.y;
+            this.origin.x += offset.x;
+            this.origin.y -= offset.y;
         })
         document.addEventListener('mouseup',(e) => {
             this.mousePress = false;
@@ -69,7 +69,7 @@ export default class Painter extends EventListener {
     }
     render(){
         let T = Transform;
-        let origin = this.center;
+        let origin = this.origin;
         let pen = this.pen;
         
         this.pen.clearRect(0,0,innerWidth,innerHeight);
@@ -88,7 +88,7 @@ export default class Painter extends EventListener {
                 }break;
 
                 case ShapeType.CIRCLE : {
-                    let v = T.c2s(d.pos.add(origin).add(d.offset));
+                    let v = T.c2s(d.center.add(origin).add(d.offset));
 
                     d.setProps(pen);
                     pen.arc(v.x,v.y,d.r,0,Math.PI * 2);
@@ -105,12 +105,23 @@ export default class Painter extends EventListener {
                         pen.lineTo(v.x,v.y);
                     }
                     d.endClose(pen);
-                }
+                }break;
+
+                case ShapeType.CURVE : {
+
+                }break;
+
+                case ShapeType.RECTANGLE : {
+                    d.setProps(pen);
+                    let lt = T.c2s(d.lt.add(origin).add(d.offset));
+                    pen.fillRect(lt.x,lt.y,d.width,d.height);   
+                    d.endClose(pen);
+                }break;
             }
         })
         
         this.components.forEach(d => {
-            d.render(pen,this.center);
+            d.render(pen,this.origin);
         })
 
         this.exps.forEach(d => {

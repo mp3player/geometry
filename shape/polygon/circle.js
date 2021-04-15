@@ -6,7 +6,7 @@ export default class Circle extends Shape {
     constructor(x,y,r,props){
         super(props);
         this.type = ShapeType.CIRCLE;
-        this.pos = new Vector(x,y);
+        this.center = new Vector(x,y);
         this.r = r;
     }
 }
