@@ -48,9 +48,26 @@ export default class Painter extends EventListener {
             this.mousePress = false;
         })
         document.addEventListener('mousewheel',(e) => {
+            console.log(e.wheelDelta);
+            this.zoom += e.wheelDelta / 1200;
+        })
+        document.addEventListener('click',(e) => {
+            console.log(this.zoom)
 
         })
 
+    }
+    c2s(vec){
+        let sx = vec.x * this.zoom + innerWidth / 2 + this.origin.x;
+        let sy = innerHeight / 2 - vec.y * this.zoom - this.origin.y;
+        
+        return new Vector(sx,sy);
+    }
+    s2c(vec){
+        let cx = (vec.x  - innerWidth / 2) / this.zoom;
+        let cy = (innerHeight / 2 - vec.y) / this.zoom ;
+    
+        return new Vector(cx,cy);
     }
     add(shape){
         
@@ -78,17 +95,17 @@ export default class Painter extends EventListener {
             switch(d.type){
                 case ShapeType.LINE:{
                     d.setProps(pen);
-                    let v = T.c2s(d.points[0].add(origin).add(d.offset));
+                    let v = this.c2s(d.points[0].add(d.offset));
                     pen.moveTo(v.x,v.y);
                     for(let i=1;i<d.points.length;++i){
-                        v = T.c2s(d.points[i].add(origin).add(d.offset));
+                        v = this.c2s(d.points[i].add(d.offset));
                         pen.lineTo(v.x,v.y);
                     }
                     d.endProps(pen);
                 }break;
 
                 case ShapeType.CIRCLE : {
-                    let v = T.c2s(d.center.add(origin).add(d.offset));
+                    let v = this.c2s(d.center.add(origin).add(d.offset));
 
                     d.setProps(pen);
                     pen.arc(v.x,v.y,d.r,0,Math.PI * 2);
@@ -98,10 +115,10 @@ export default class Painter extends EventListener {
 
                 case ShapeType.POLYGON : {
                     d.setProps(pen);
-                    let v = T.c2s(d.points[0].add(origin).add(d.offset));
+                    let v = this.c2s(d.points[0]);
                     pen.moveTo(v.x,v.y);
                     for(let i=1;i<d.points.length;++i){
-                        v = T.c2s(d.points[i].add(origin).add(d.offset));
+                        v = this.c2s(d.points[i]);
                         pen.lineTo(v.x,v.y);
                     }
                     d.endClose(pen);
@@ -113,15 +130,15 @@ export default class Painter extends EventListener {
 
                 case ShapeType.RECTANGLE : {
                     d.setProps(pen);
-                    let lt = T.c2s(d.lt.add(origin).add(d.offset));
-                    pen.fillRect(lt.x,lt.y,d.width,d.height);   
+                    let lt = this.c2s(d.lt.add(origin));
+                    pen.arc(lt.x,lt.y,10,0,Math.PI * 2);   
                     d.endClose(pen);
                 }break;
             }
         })
         
         this.components.forEach(d => {
-            d.render(pen,this.origin);
+            d.render(pen,this.origin,this.zoom);
         })
 
         this.exps.forEach(d => {
@@ -131,7 +148,6 @@ export default class Painter extends EventListener {
     loopRender(){
         let a = () => {
             requestAnimationFrame(a);
-            
             this.render();
         }
         a();

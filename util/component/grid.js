@@ -9,7 +9,9 @@ export default class Grid extends Helper {
         this.sy = sy;
 
     }
-    render(pen,origin){
+    render(pen,origin,zoom){
+        let sx = this.sx * zoom;
+        let sy = this.sy * zoom;
         let o = T.c2s(origin);
 
         //x axis
@@ -18,12 +20,12 @@ export default class Grid extends Helper {
         pen.strokeStyle = Color.XAXES;
         pen.beginPath();
 
-        for(let i=o.y;i<innerHeight;i+=this.sy){  
+        for(let i=o.y;i<innerHeight;i+=sy){  
             pen.moveTo(0,i);
             pen.lineTo(innerWidth,i);
         }
 
-        for(let i=o.y;i>0;i-=this.sy){
+        for(let i=o.y;i>0;i-=sy){
             pen.moveTo(0,i);
             pen.lineTo(innerWidth,i);
             
@@ -38,12 +40,12 @@ export default class Grid extends Helper {
         pen.beginPath();
         pen.strokeStyle = Color.YAXES;
 
-        for(let i=o.x;i<innerWidth;i+=this.sx){
+        for(let i=o.x;i<innerWidth;i+=sx){
             pen.moveTo(i,0);
             pen.lineTo(i,innerHeight);
         }
 
-        for(let i=o.x;i>0;i-=this.sx){
+        for(let i=o.x;i>0;i-=sx){
             pen.moveTo(i,0);
             pen.lineTo(i,innerHeight);
             

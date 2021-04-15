@@ -26,7 +26,10 @@ function c2s_r(vec,r){      //transform with the rotation
     
 }
 function c2s_s(vec,s){      //transform with the scale
-
+    let sx = vec.x * s + innerWidth / 2;
+    let sy = innerHeight / 2 - vec.y * s;
+    
+    return new Vector(sx,sy);
 }
 
 export default {

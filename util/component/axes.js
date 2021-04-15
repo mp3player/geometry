@@ -8,7 +8,7 @@ export default class Axes extends Helper{
         this.cy = cy;
         
     }
-    render(pen,origin){
+    render(pen,origin,zoom){
         
         
         let o = T.c2s(origin);
