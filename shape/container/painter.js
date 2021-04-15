@@ -37,8 +37,6 @@ export default class Painter extends EventListener {
             this.mouse = current;
             this.center.x += offset.x;
             this.center.y -= offset.y;
-
-            console.log(this.center)
         })
         document.addEventListener('mouseup',(e) => {
             this.mousePress = false;
@@ -74,7 +72,6 @@ export default class Painter extends EventListener {
     }
     render(){
         let T = Transform;
-        console.log(T)
         let origin = this.center;
         let pen = this.pen;
         this.pen.clearRect(0,0,innerWidth,innerHeight);
