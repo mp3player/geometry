@@ -8,6 +8,20 @@ export default class Painter {
         this.canvas.height = innerHeight;
         this.pen = this.canvas.getContext('2d');
         this.shapes = new Queue();
+
+        this.init();
+    }
+    init(){
+        this.adapt();
+    }
+    adapt(){
+        window.addEventListener('resize',() => {
+            this.canvas.width = innerWidth;
+            this.canvas.height = innerHeight;
+        })
+        document.addEventListener('contextmenu',(e) => {
+            console.log(e)
+        })
     }
     add(shape){
         this.shapes.push(shape);
