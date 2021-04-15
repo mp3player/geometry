@@ -2,9 +2,11 @@ import { Color } from "../../constant/ConstantColor.js";
 import Vector from "../../math/vector.js";
 import line from "../../shape/path/line.js";
 import T from '../transform.js'
+import Helper from "./helper.js";
 
-export default class Axes{
+export default class Axes extends Helper{
     constructor(cx,cy){
+        super();
         this.cx = cx;
         this.cy = cy;
         

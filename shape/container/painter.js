@@ -4,6 +4,7 @@ import EventListener from "../../event/EventListener.js";
 import Transform from '../../util/transform.js'
 import Shape from "../shape.js";
 import { ShapeType } from "../../constant/ConstantShape.js";
+import Helper from "../../util/component/helper.js";
 
 export default class Painter extends EventListener {
     constructor(canvas){
@@ -16,6 +17,7 @@ export default class Painter extends EventListener {
         this.pen = this.canvas.getContext('2d');
         this.shapes = new Queue();
         this.components = new Queue();
+        this.exps = new Queue();
 
         this.init();
     }
@@ -46,18 +48,18 @@ export default class Painter extends EventListener {
             this.mousePress = false;
         })
         document.addEventListener('mousewheel',(e) => {
-            // console.log(e.wheelDelta);
 
-            this.zoom += e.wheelDelta / 12000;
-            console.log(this.zoom)
         })
 
     }
     add(shape){
+        
         if(shape instanceof Shape)
             this.shapes.push(shape);
-        else
+        else if(shape instanceof Helper)
             this.components.push(shape)
+        else
+            this.exps.push(shape);
     }
     getWidth(){
         return this.canvas.width;
@@ -106,8 +108,13 @@ export default class Painter extends EventListener {
                 }
             }
         })
+        
         this.components.forEach(d => {
             d.render(pen,this.center);
+        })
+
+        this.exps.forEach(d => {
+                        
         })
     }
     loopRender(){
