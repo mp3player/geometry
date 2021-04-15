@@ -6,6 +6,7 @@ import Shape from "../shape.js";
 import { ShapeType } from "../../constant/ConstantShape.js";
 import Helper from "../../util/component/helper.js";
 
+
 export default class Painter extends EventListener {
     constructor(canvas){
         super();
