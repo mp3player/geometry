@@ -14,6 +14,9 @@ export default class Vector {
     mul(vec){
         return new Vector(this.x * vec.x , this.y * vec.y);
     }
+    scale(s){
+        return new Vector(s,s).mul(this);
+    }
     length(){
         return Math.hypot(this.x,this.y);
     }
