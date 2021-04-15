@@ -1,6 +1,5 @@
 import Vector from "../math/vector.js";
 import Style from "../util/style.js";
-import Transform from '../util/transform.js'
 
 export default class Shape {
     constructor(props){
@@ -9,7 +8,6 @@ export default class Shape {
         this.rotation = 0;
         this.props = new Style(props);
         this.index = 0;
-        this.T = Transform;
     }
     setProps(pen){
         let props = this.props;

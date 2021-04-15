@@ -1,8 +1,12 @@
 import Vector from "../../math/vector.js";
 import Queue from '../../collection/queue.js'
+import EventListener from "../../event/EventListener.js";
+import Transform from '../../util/transform.js'
 
-export default class Painter {
+export default class Painter extends EventListener {
     constructor(canvas){
+        super();
+        this.center = new Vector(0,0);
         this.canvas = canvas;
         this.canvas.width = innerWidth;
         this.canvas.height = innerHeight;
@@ -19,9 +23,27 @@ export default class Painter {
             this.canvas.width = innerWidth;
             this.canvas.height = innerHeight;
         })
-        document.addEventListener('contextmenu',(e) => {
-            console.log(e)
+        document.addEventListener('mousedown',(e) => {
+            this.mousePress = true;
+            this.mouse.x = e.x;
+            this.mouse.y = e.y;
         })
+        document.addEventListener('mousemove',(e) => {
+            if(!this.mousePress){
+                return ;
+            }
+            let current = new Vector(e.x,e.y);
+            let offset = current.sub(this.mouse);
+            this.mouse = current;
+            this.center.x += offset.x;
+            this.center.y -= offset.y;
+
+            console.log(this.center)
+        })
+        document.addEventListener('mouseup',(e) => {
+            this.mousePress = false;
+        })
+
     }
     add(shape){
         this.shapes.push(shape);
@@ -51,14 +73,50 @@ export default class Painter {
         return new Vector(cx,cy);
     }
     render(){
+        let T = Transform;
+        console.log(T)
+        let origin = this.center;
+        let pen = this.pen;
+        this.pen.clearRect(0,0,innerWidth,innerHeight);
         this.shapes.forEach(d => {
-            d.render(this.pen);
+            switch(d.type){
+                case 'line':{
+                    d.setProps(pen);
+                    let v = T.c2s(d.points[0].add(origin)).add(d.offset);
+                    pen.moveTo(v.x,v.y);
+                    for(let i=1;i<d.points.length;++i){
+                        v = T.c2s(d.points[i].add(origin)).add(d.offset);
+                        pen.lineTo(v.x,v.y);
+                    }
+                    d.endProps(pen);
+                }break;
+
+                case 'circle' : {
+                    let v = T.c2s(d.pos.add(origin)).add(d.offset);
+
+                    d.setProps(pen);
+                    pen.arc(v.x,v.y,d.r,0,Math.PI * 2);
+                    d.endClose(pen);
+
+                }break;
+
+                case 'polygon' : {
+                    d.setProps(pen);
+                    let v = T.c2s(d.points[0].add(origin)).add(d.offset);
+                    pen.moveTo(v.x,v.y);
+                    for(let i=1;i<d.points.length;++i){
+                        v = T.c2s(d.points[i].add(origin)).add(d.offset);
+                        pen.lineTo(v.x,v.y);
+                    }
+                    d.endClose(pen);
+                }
+            }
         })
     }
     loopRender(){
         let a = () => {
             requestAnimationFrame(a);
-            this.pen.clearRect(0,0,innerWidth,innerHeight);
+            
             this.render();
         }
         a();

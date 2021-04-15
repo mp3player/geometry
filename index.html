@@ -36,15 +36,6 @@
             borderColor:Color.RED,
             borderWidth:20
         });
-        let line = new Line([
-            new Vector(0,0),
-            new Vector(100,100),
-            new Vector(200,100),
-        ],{
-            borderColor:Color.PURPLE,
-            borderWidth : 10
-        });
-
         let poly = new Polygon([
             new Vector(0,0),
             new Vector(100,0),
@@ -53,6 +44,15 @@
             borderWidth:20,
             background:Color.RED,
             borderColor : Color.PURPLE,
+        });
+
+        let line = new Line([
+            new Vector(300,300),
+            new Vector(400,0),
+            new Vector(100,150),
+        ],{
+            borderWidth:10,
+            borderColor:'red'
         })
 
         let axes = new Axes(Color.RED,Color.GREEN);
@@ -60,12 +60,13 @@
 
         painter.add(grid);
         painter.add(axes);
+        painter.add(line);
 
         circle.translate(100,100);
         painter.add(poly);
         painter.add(circle);
         
-        painter.loopRender();
+        painter.render();
         // setInterval(() => {
         //     poly.center.x += 1;
         // },100)

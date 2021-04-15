@@ -1,10 +1,11 @@
-export default class Event {
+import Vector from "../math/vector.js";
+
+export default class EventListener {
     constructor(){
         this.mousePress = false;
         this.mouseLPress = false;
         this.mouseRPress = false;
-        this.mouseX = 0;
-        this.mouseY = 0;
+        this.mouse = new Vector(0,0);
         this.timer = null;
     }
 }

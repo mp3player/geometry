@@ -6,24 +6,29 @@ export default class Axes{
     constructor(cx,cy){
         this.cx = cx;
         this.cy = cy;
-    }
-    render(pen){
-        let x = new line([
+        this.xLine = new line([
             new Vector(-innerWidth/2,0),
             new Vector(innerWidth/2,0)
         ],{
             borderWidth:2,
             borderColor:Color.RED
         });
-        let y = new line([
+        this.yLine = new line([
             new Vector(0,-innerHeight / 2),
             new Vector(0,innerHeight / 2)
         ],{
             borderWidth:2,
             borderColor:Color.GREEN
         });
+    }
+    setOrigin(x,y){
+        this.xLine.setOrigin(x,y);
+        this.yLine.setOrigin(x,y);
+    }
+    render(pen){
         
-        x.render(pen);
-        y.render(pen);
+        
+        this.xLine.render(pen);
+        this.yLine.render(pen);
     }
 }
