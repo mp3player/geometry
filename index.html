@@ -35,14 +35,14 @@
         let circle = new Circle(0,0,100,{
             background:Color.BROWN,
             borderColor:Color.RED,
-            borderWidth:20
+            borderWidth:1
         });
         let poly = new Polygon([
             new Vector(0,0),
             new Vector(100,0),
             new Vector(100,100),
         ],{
-            borderWidth:20,
+            borderWidth:1,
             background:Color.RED,
             borderColor : Color.PURPLE,
         });
@@ -52,7 +52,7 @@
             new Vector(200,0),
             new Vector(100,150),
         ],{
-            borderWidth:10,
+            borderWidth:1,
             borderColor:'red'
         })
 
@@ -68,10 +68,10 @@
         painter.add(line);
         painter.add(rect);
 
-        // poly.translate(-100,0);
-        // circle.translate(100,100);
-        // painter.add(poly);
-        // painter.add(circle);
+        poly.translate(-100,0);
+        circle.translate(100,100);
+        painter.add(poly);
+        painter.add(circle);
         
         painter.loopRender();
         // setInterval(() => {

@@ -49,23 +49,22 @@ export default class Painter extends EventListener {
             this.mousePress = false;
         })
         document.addEventListener('mousewheel',(e) => {
-            console.log(e.wheelDelta);
-            this.zoom += e.wheelDelta / 1200;
+            this.zoom += this.zoom *= 10 / e.wheelDelta ;
+            console.log(this.zoom)
         })
         document.addEventListener('click',(e) => {
-            console.log(this.zoom)
 
         })
 
     }
     c2s(vec){
-        let sx = vec.x * this.zoom + innerWidth / 2 + this.origin.x;
-        let sy = innerHeight / 2 - vec.y * this.zoom - this.origin.y;
+        let sx = vec.x * this.zoom + innerWidth / 2 + this.origin.x ;
+        let sy = innerHeight / 2 - vec.y * this.zoom - this.origin.y ;
         
         return new Vector(sx,sy);
     }
     s2c(vec){
-        let cx = (vec.x  - innerWidth / 2) / this.zoom;
+        let cx = (vec.x  - innerWidth / 2) / this.zoom ;
         let cy = (innerHeight / 2 - vec.y) / this.zoom ;
     
         return new Vector(cx,cy);
@@ -92,6 +91,10 @@ export default class Painter extends EventListener {
         
         this.pen.clearRect(0,0,innerWidth,innerHeight);
 
+        this.components.forEach(d => {
+            d.render(pen,this.origin,this.zoom);
+        })
+
         this.shapes.forEach(d => {
             switch(d.type){
                 case ShapeType.LINE:{
@@ -106,10 +109,10 @@ export default class Painter extends EventListener {
                 }break;
 
                 case ShapeType.CIRCLE : {
-                    let v = this.c2s(d.center.add(origin).add(d.offset));
+                    let v = this.c2s(d.center.add(d.offset));
 
                     d.setProps(pen);
-                    pen.arc(v.x,v.y,d.r,0,Math.PI * 2);
+                    pen.arc(v.x,v.y,d.r * this.zoom,0,Math.PI * 2);
                     d.endClose(pen);
 
                 }break;
@@ -131,8 +134,8 @@ export default class Painter extends EventListener {
 
                 case ShapeType.RECTANGLE : {
                     d.setProps(pen);
-                    let lt = this.c2s(d.lt.add(origin));
-                    pen.arc(lt.x,lt.y,10,0,Math.PI * 2);   
+                    let lt = this.c2s(d.lt);
+                    pen.fillRect(lt.x,lt.y,d.width * this.zoom ,d.height * this.zoom);   
                     d.endClose(pen);
                 }break;
             }
@@ -142,9 +145,6 @@ export default class Painter extends EventListener {
             d.render(pen,this.origin,this.zoom);
         })
 
-        this.exps.forEach(d => {
-                        
-        })
     }
     loopRender(){
         let a = () => {
