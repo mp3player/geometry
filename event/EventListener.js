@@ -16,6 +16,11 @@ export default class EventListener {
         this.onDrag = null;
     }
     on(name,callback){
-
+        this[name] = callback;
+    }
+    trigger(name,event){
+        if(this[name] != null){
+            this[name](event);
+        }
     }
 }

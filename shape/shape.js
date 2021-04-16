@@ -1,9 +1,11 @@
 import { Join } from "../constant/ConstantJoin.js";
+import EventListener from "../event/EventListener.js";
 import Vector from "../math/vector.js";
 import Style from "../util/style.js";
 
-export default class Shape {
+export default class Shape extends EventListener {
     constructor(props){
+        super();
         this.offset = new Vector(0,0);
         this.scale = new Vector(1,1);
         this.rotation = 0;
@@ -53,7 +55,7 @@ export default class Shape {
     rotate(r){
         this.rotation += r;
     }
-    render(pen){
-        
+    isTouch(vec){
+        return false;
     }
 }

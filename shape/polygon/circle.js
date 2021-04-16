@@ -9,4 +9,12 @@ export default class Circle extends Shape {
         this.center = new Vector(x,y);
         this.r = r;
     }
+    //extends from Shape
+    isTouch(vec){
+        
+    }
+    //extends from EventListener
+    trigger(name,e){
+
+    }
 }

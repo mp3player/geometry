@@ -11,7 +11,7 @@ export default class Axes extends Helper{
     render(pen,origin,zoom){
         let o = T.c2s(origin);
         pen.save();
-        pen.lineWidth = 2 * Math.sqrt(zoom);
+        pen.lineWidth = .1 * Math.sqrt(zoom);
         pen.beginPath();
         pen.strokeStyle = this.cx;
         pen.moveTo(0,o.y);
@@ -21,7 +21,7 @@ export default class Axes extends Helper{
         pen.restore();
 
         pen.save();
-        pen.lineWidth = 2 * Math.sqrt(zoom);
+        pen.lineWidth = .1 * Math.sqrt(zoom);
         pen.beginPath();
         pen.strokeStyle = this.cy;
         pen.moveTo(o.x,0);

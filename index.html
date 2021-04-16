@@ -15,7 +15,7 @@
 <body>
     <canvas id="canvas"></canvas>
     <script type="module">
-        import Express from './collection/express.js'
+        // import Express from './collection/express.js'
         import Stack from './collection/stack.js'
 
         import Painter from './shape/container/painter.js'
@@ -30,17 +30,19 @@
 
         import {Color} from './constant/ConstantColor.js'
 
+        import Express from './shape/fn/express.js'
+
         let painter = new Painter(canvas);
 
-        let circle = new Circle(0,0,100,{
+        let circle = new Circle(0,0,10,{
             background:Color.BROWN,
             borderColor:Color.RED,
             borderWidth:1
         });
         let poly = new Polygon([
             new Vector(0,0),
-            new Vector(100,0),
-            new Vector(100,100),
+            new Vector(10,0),
+            new Vector(10,10),
         ],{
             borderWidth:1,
             background:Color.RED,
@@ -48,20 +50,20 @@
         });
 
         let line = new Line([
-            new Vector(100,100),
-            new Vector(200,0),
-            new Vector(100,150),
+            new Vector(10,10),
+            new Vector(20,0),
+            new Vector(10,15),
         ],{
             borderWidth:1,
             borderColor:'red'
         })
 
-        let rect = new Rectange(100,-100,-300,100,{
+        let rect = new Rectange(10,-10,-30,10,{
             background:'red'
         })
 
         let axes = new Axes(Color.RED,Color.GREEN);
-        let grid = new Grid(50,50);
+        let grid = new Grid(10,10);
 
         painter.add(grid);
         painter.add(axes);
@@ -69,11 +71,21 @@
         painter.add(rect);
 
         poly.translate(-100,0);
-        circle.translate(100,100);
         painter.add(poly);
         painter.add(circle);
         
+        
+
+        let exp = new Express('x + 1',{borderWidth:2});
+        // exp.getPoints(0,10);
+        circle.index = -10;
+        painter.add(exp)
+
         painter.loopRender();
+
+        console.log(painter)
+        
+        
         // setInterval(() => {
         //     poly.center.x += 1;
         // },100)

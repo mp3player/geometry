@@ -11,7 +11,7 @@ export default class Painter extends EventListener {
     constructor(canvas){
         super();
         this.origin = new Vector(0,0);
-        this.zoom = 1;
+        this.zoom = 10;
         this.canvas = canvas;
         this.canvas.width = innerWidth;
         this.canvas.height = innerHeight;
@@ -73,13 +73,14 @@ export default class Painter extends EventListener {
         return new Vector(cx,cy);
     }
     add(shape){
-        
-        if(shape instanceof Shape)
+
+        if(shape instanceof Shape){
             this.shapes.push(shape);
-        else if(shape instanceof Helper)
+        }else if(shape instanceof Helper){
             this.components.push(shape)
-        else
+        }else{
             this.exps.push(shape);
+        }
     }
     getWidth(){
         return this.canvas.width;
@@ -144,8 +145,21 @@ export default class Painter extends EventListener {
             }
         })
         
-        this.components.forEach(d => {
-            d.render(pen,this.origin,this.zoom);
+        this.exps.forEach(d => {
+            let p = d.getPoints(-100,100);
+            let v = this.c2s(p[0]);
+            pen.save();
+            pen.beginPath();
+            pen.lineWidth=2;
+            pen.moveTo(v.x,v.y);
+            for(let i=1;i<p.length;++i){
+                v = this.c2s(p[i]);
+                pen.lineTo(v.x,v.y);
+            }
+            pen.stroke();
+            pen.closePath();
+            pen.restore();
+            // console.log(points)
         })
 
     }
