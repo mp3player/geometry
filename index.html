@@ -35,8 +35,8 @@
         let painter = new Painter(canvas);
 
         let circle = new Circle(0,0,10,{
-            background:Color.BROWN,
-            borderColor:Color.RED,
+            background:Color.RED4,
+            borderColor:Color.RED7,
             borderWidth:1
         });
         let poly = new Polygon([
@@ -45,7 +45,7 @@
             new Vector(10,10),
         ],{
             borderWidth:1,
-            background:Color.RED,
+            background:Color.RED7,
             borderColor : Color.PURPLE,
         });
 
@@ -55,11 +55,11 @@
             new Vector(10,15),
         ],{
             borderWidth:1,
-            borderColor:'red'
+            borderColor:Color.RED
         })
 
         let rect = new Rectange(10,-10,-30,10,{
-            background:'red'
+            background:Color.BLACK7
         })
 
         let axes = new Axes(Color.RED,Color.GREEN);

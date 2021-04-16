@@ -39,6 +39,7 @@ export default class Painter extends EventListener {
             if(!this.mousePress){
                 return ;
             }
+            document.body.style.cursor = 'pointer'
             let current = new Vector(e.x,e.y);
             let offset = current.sub(this.mouse);
             this.mouse = current;
@@ -46,11 +47,11 @@ export default class Painter extends EventListener {
             this.origin.y -= offset.y;
         })
         document.addEventListener('mouseup',(e) => {
+            document.body.style.cursor = 'auto'
             this.mousePress = false;
         })
         document.addEventListener('mousewheel',(e) => {
             this.zoom += this.zoom *= 10 / e.wheelDelta ;
-            console.log(this.zoom)
         })
         document.addEventListener('click',(e) => {
             // console.log(e)
