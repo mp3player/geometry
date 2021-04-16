@@ -147,7 +147,7 @@ export default class Painter extends EventListener {
         })
         
         this.exps.forEach(d => {
-            let p = d.getPoints(-100,100);
+            let p = d.getPoints();
             let v = this.c2s(p[0]);
             pen.save();
             pen.beginPath();
