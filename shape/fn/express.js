@@ -3,12 +3,10 @@ import Stack from "../../collection/stack.js";
 import Shape from "../shape.js";
 import { ShapeType } from "../../constant/ConstantShape.js";
 export default class Express{
-    constructor(exp,l,r,props){
+    constructor(exp,props){
         // super(props)
         this.exp = exp;
         this.type = ShapeType.FUNCTION;
-        this.l = l;
-        this.r = r;
     }
     //return that if the level of the o1 is higher than the o2
     compareOperation(o1,o2){
@@ -191,9 +189,9 @@ export default class Express{
         return num.top();
 
     }
-    getPoints(){
-        let l = this.l;
-        let r = this.r;
+    getPoints(l,r){
+        // let l = this.l;
+        // let r = this.r;
         let ps = [];
         for(let x=l;x<r;++x){
             let y = this.getYVal(x);

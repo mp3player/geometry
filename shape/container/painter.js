@@ -147,7 +147,11 @@ export default class Painter extends EventListener {
         })
         
         this.exps.forEach(d => {
-            let p = d.getPoints();
+            let l = this.s2c(new Vector(0,0));
+            let r = this.s2c(new Vector(innerWidth,innerWidth));
+
+            let p = d.getPoints(l.x,r.x);
+            // console.log(p)
             let v = this.c2s(p[0]);
             pen.save();
             pen.beginPath();
@@ -160,7 +164,6 @@ export default class Painter extends EventListener {
             pen.stroke();
             pen.closePath();
             pen.restore();
-            // console.log(points)
         })
 
     }
