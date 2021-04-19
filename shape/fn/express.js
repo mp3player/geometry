@@ -134,7 +134,6 @@ export default class Express{
         }
         // let numbers = [];
         // let operations = [];
-        
         //the second    :   split the charactor into numbers or operations
         let subExpress = new Stack();
         let next = '';

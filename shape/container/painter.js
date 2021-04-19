@@ -34,6 +34,10 @@ export default class Painter extends EventListener {
             this.mousePress = true;
             this.mouse.x = e.x;
             this.mouse.y = e.y;
+            let coord = this.s2c(new Vector(e.x,e.y));
+            this.shapes.forEach(d => {
+                d.isTouch(coord);
+            })
         })
         document.addEventListener('mousemove',(e) => {
             if(!this.mousePress){

@@ -12,6 +12,9 @@ export default class Shape extends EventListener {
         this.props = new Style(props);
         this.index = 0;
     }
+    isTouch(vec){
+        return false;
+    }
     setProps(pen){
         let props = this.props;
         pen.save();
