@@ -87,9 +87,9 @@
         // exp.getPoints(0,10);
         // painter.add(exp)
 
-        let linear = new LinearExpression(2,1);
-        let square = new SquareExpression(1/20,0,0);
-        let exp = new PolynomialExpression([-1/4,-1/3,1/20,1,8])
+        // let linear = new LinearExpression(2,1);
+        // let square = new SquareExpression(1/20,0,0);
+        // let exp = new PolynomialExpression([-1/4,-1/3,1/20,1,8])
       
         // painter.add(curve)
 
@@ -130,29 +130,38 @@
             .then(data => {
                 data.forEach(d => {
                     let vec = new Vector(d[0],d[1]);
-                    arr.push(vec);
+                    // arr.push(vec);
                     let c = new Circle(vec.x,vec.y)
-                    painter.add(c)
+                    // painter.add(c)
                 })
                 
             })
 
-            let p = Convex.getConvex(arr);
+            // let p = Convex.getConvex(arr);
          
-            console.log(p)
+            // console.log(p)
 
-            p.forEach(d => {
-                painter.add(new Circle(d.x,d.y,2,{
-                    background:Color.RED1
-                }))
-            })
+            // p.forEach(d => {
+            //     // painter.add(new Circle(d.x,d.y,2,{
+            //     //     background:Color.RED1
+            //     // }))
+            // })
 
         // convex(painter,arr)
+
+        painter.config('drag',true)
         
+        let sline = new LinearExpression(2,1);
+        let square = new SquareExpression(.1,3,3);
+        let polynomial = new PolynomialExpression([.005,.2,.3,.5,9]);
+
+        painter.add(sline)
+        painter.add(square)
+        painter.add(polynomial)
 
 
         // painter.loopRender();
-        painter.render();
+        painter.loopRender();
     </script>
 </body>
 </html>

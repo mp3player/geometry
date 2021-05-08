@@ -58,8 +58,8 @@ export default class Painter extends EventListener {
             if(this.operationConfig.drag){
                 this.origin.x += offset.x;
                 this.origin.y -= offset.y;
+                
             }
-
 
             this.trigger('mousemove',this.s2c(current))
         })
@@ -237,5 +237,11 @@ export default class Painter extends EventListener {
             ++i;
             
         },1);
+    }
+    config(name,value){
+        if(this.operationConfig[name] != null){
+            
+            this.operationConfig[name] = value ? true : false;
+        }
     }
 }
