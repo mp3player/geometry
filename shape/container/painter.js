@@ -5,6 +5,7 @@ import Transform from '../../util/transform.js'
 import Shape from "../shape.js";
 import { ShapeType } from "../../constant/ConstantShape.js";
 import Helper from "../../util/component/helper.js";
+import { Polynomial } from "../../constant/ConstantPolynomial.js";
 
 
 export default class Painter extends EventListener {
@@ -19,6 +20,10 @@ export default class Painter extends EventListener {
         this.shapes = new Queue();
         this.components = new Queue();
         this.exps = new Queue();
+        this.operationConfig = {
+            drag    :   false,
+            zoom    :   false,
+        };
 
         this.init();
     }
@@ -38,6 +43,8 @@ export default class Painter extends EventListener {
             this.shapes.forEach(d => {
                 d.isTouch(coord);
             })
+
+            this.trigger('mousedown',coord);
         })
         document.addEventListener('mousemove',(e) => {
             if(!this.mousePress){
@@ -47,12 +54,20 @@ export default class Painter extends EventListener {
             let current = new Vector(e.x,e.y);
             let offset = current.sub(this.mouse);
             this.mouse = current;
-            this.origin.x += offset.x;
-            this.origin.y -= offset.y;
+            
+            if(this.operationConfig.drag){
+                this.origin.x += offset.x;
+                this.origin.y -= offset.y;
+            }
+
+
+            this.trigger('mousemove',this.s2c(current))
         })
         document.addEventListener('mouseup',(e) => {
             document.body.style.cursor = 'auto'
+            let current = this.s2c(new Vector(e.x,e.y));
             this.mousePress = false;
+            this.trigger('mouseup',current)
         })
         document.addEventListener('mousewheel',(e) => {
             this.zoom += this.zoom *= 10 / e.wheelDelta ;
@@ -61,7 +76,12 @@ export default class Painter extends EventListener {
             // console.log(e)
             let mouse = new Vector(e.x,e.y);
             let p = this.s2c(mouse);
-            console.log(p);
+            // if(this.click )
+                this.trigger('click',p)
+            // console.log(p);
+        })
+        document.addEventListener('dblclick',() => {
+            this.reset()
         })
 
     }
@@ -107,14 +127,16 @@ export default class Painter extends EventListener {
         this.shapes.forEach(d => {
             switch(d.type){
                 case ShapeType.LINE:{
-                    d.setProps(pen);
-                    let v = this.c2s(d.points[0].add(d.offset));
-                    pen.moveTo(v.x,v.y);
-                    for(let i=1;i<d.points.length;++i){
-                        v = this.c2s(d.points[i].add(d.offset));
-                        pen.lineTo(v.x,v.y);
+                    if(d.points.length > 0){
+                        d.setProps(pen);
+                        let v = this.c2s(d.points[0].add(d.offset));
+                        pen.moveTo(v.x,v.y);
+                        for(let i=1;i<d.points.length;++i){
+                            v = this.c2s(d.points[i].add(d.offset));
+                            pen.lineTo(v.x,v.y);
+                        }
+                        d.endProps(pen);
                     }
-                    d.endProps(pen);
                 }break;
 
                 case ShapeType.CIRCLE : {
@@ -150,26 +172,42 @@ export default class Painter extends EventListener {
             }
         })
         
+        // this.exps.forEach(d => {
+        //     let l = this.s2c(new Vector(0,0));
+        //     let r = this.s2c(new Vector(innerWidth,innerWidth));
+
+        //     let p = d.getPoints(l.x,r.x);
+        //     // console.log(p)
+        //     let v = this.c2s(p[0]);
+        //     pen.save();
+        //     pen.beginPath();
+        //     pen.lineWidth=2;
+        //     pen.moveTo(v.x,v.y);
+        //     for(let i=1;i<p.length;++i){
+        //         v = this.c2s(p[i]);
+        //         pen.lineTo(v.x,v.y);
+        //     }
+        //     pen.stroke();
+        //     pen.closePath();
+        //     pen.restore();
+        // })
+
         this.exps.forEach(d => {
             let l = this.s2c(new Vector(0,0));
             let r = this.s2c(new Vector(innerWidth,innerWidth));
 
-            let p = d.getPoints(l.x,r.x);
-            // console.log(p)
-            let v = this.c2s(p[0]);
-            pen.save();
+            let y1 = d.getValue(l.x);
             pen.beginPath();
-            pen.lineWidth=2;
-            pen.moveTo(v.x,v.y);
-            for(let i=1;i<p.length;++i){
-                v = this.c2s(p[i]);
+            pen.moveTo(l.x,y1);
+            for(let i=l.x;i<r.x;i += 1 / this.zoom){
+                let v = d.getValue(i);
+                v = this.c2s(new Vector(i,v));
                 pen.lineTo(v.x,v.y);
             }
             pen.stroke();
             pen.closePath();
-            pen.restore();
-        })
 
+        })
     }
     loopRender(){
         let a = () => {
@@ -177,5 +215,27 @@ export default class Painter extends EventListener {
             this.render();
         }
         a();
+    }
+    reset(){
+        let i = 0;
+        let duration = 100;
+
+        let zoom = (this.zoom - 10) / duration;  
+        let ox = this.origin.x / duration;
+        let oy = this.origin.y / duration;
+        
+
+        let timer = setInterval(() => {
+            if(i >= duration){
+                clearInterval(timer);
+                this.zoom = 10;
+                this.origin = new Vector(0,0);
+            }
+            this.zoom -= zoom;
+            this.origin.x -= ox;
+            this.origin.y -= oy;
+            ++i;
+            
+        },1);
     }
 }

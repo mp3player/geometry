@@ -1,7 +1,7 @@
-import Vector from "../../math/vector.js";
-import Stack from "../../collection/stack.js";
-import Shape from "../shape.js";
-import { ShapeType } from "../../constant/ConstantShape.js";
+import Vector from "./math/vector.js";
+import Stack from "./collection/stack.js";
+import Shape from "./shape/shape.js";
+import { ShapeType } from "./constant/ConstantShape.js";
 export default class Express{
     constructor(exp,props){
         // super(props)

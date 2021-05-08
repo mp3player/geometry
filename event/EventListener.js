@@ -13,12 +13,12 @@ export default class EventListener {
         this.mouse = new Vector(0,0);
 
         this.listeners = {
-            onPress    :   null,
-            onRealse   :   null,
-            onClick    :   null,
-            onMove     :   null,
-            onZoom     :   null,
-            onDrag     :   null,
+            press    :   null,
+            realse   :   null,
+            click    :   null,
+            move     :   null,
+            zoom     :   null,
+            drag     :   null,
         }
     }
     on(name,callback){

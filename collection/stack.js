@@ -21,4 +21,9 @@ export default class Stack {
         this.data = [];
         this.length = 0;
     }
+    forEach(cb){
+        this.data.forEach(d => {
+            cb(d)
+        })
+    }
 }

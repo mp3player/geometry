@@ -5,6 +5,13 @@ export default class Vector {
         this.x = x;
         this.y = y;
     }
+    normalize(){
+        let len = Math.hypot(this.x,this.y);
+        return new Vector(
+            this.x / len,
+            this.y / len
+        );
+    }
     add(vec){
         return new Vector(this.x + vec.x , this.y + vec.y);
     }

@@ -1,4 +1,5 @@
 import { Join } from "../constant/ConstantJoin.js";
+import {Color} from '../shape/image/image.js'
 
 /**
  * common drawing properties
@@ -14,9 +15,9 @@ import { Join } from "../constant/ConstantJoin.js";
  */
 export default class Style {
     constructor(opt={}){
-        this.background = opt.background ;
+        this.background = opt.background;
         // this.color = opt.color;
-        this.borderColor = opt.borderColor || null ;
+        this.borderColor = opt.borderColor ? opt.borderColor : Color.BLACK;
         this.borderRadius = opt.borderRadius || 0;
         this.borderWidth = opt.borderWidth || 1;
         this.join = opt.join || Join.MITER;
