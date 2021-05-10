@@ -105,15 +105,16 @@ export default class Painter extends EventListener {
         return new Vector(cx,cy);
     }
     add(shape){
-
         if(shape instanceof Shape){
-
             this.shapes.push(shape);
+            this.updateBox(shape.box);
+
         }else if(shape instanceof Helper){
             this.components.push(shape)
         }else{
             this.exps.push(shape);
         }
+        this.repaint();
     }
     getWidth(){
         return this.canvas.width;
@@ -248,7 +249,8 @@ export default class Painter extends EventListener {
     }
     translate(vec){
         let v = new Vector(vec.x,-vec.y).scale(.1);
-        this.origin = this.origin.add(v)
+        this.origin = this.origin.add(v);
+        this.repaint();
     }
     config(name,value){
         if(this.operationConfig[name] != null){
@@ -256,7 +258,7 @@ export default class Painter extends EventListener {
             this.operationConfig[name] = value ? true : false;
         }
     }
-    computeBox(box){
+    updateBox(box){
         if(box.lt.x < this.box.lt.x){
             this.box.lt.x = box.lt.x;
         }
@@ -269,5 +271,8 @@ export default class Painter extends EventListener {
         if(box.rb.y < this.box.rb.y){
             this.box.rb.y = box.rb.y;
         }
+    }
+    repaint(){
+        this.render();
     }
 }
