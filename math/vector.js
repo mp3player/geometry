@@ -36,4 +36,10 @@ export default class Vector {
     toComplex(){
         return new Complex(this.x,this.y);
     }
+    copy(){
+        return new Vector(this.x,this.y);
+    }
+    toString(){
+        return `[x : ${this.x} , y : ${this.y}]`
+    }
 }

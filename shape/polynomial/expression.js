@@ -1,4 +1,4 @@
-import { Polynomial } from "../../constant/ConstantPolynomial.js";
+import { Polynomial } from "../../constant/Constant.js";
 import PolyFunction from "./function.js";
 
 

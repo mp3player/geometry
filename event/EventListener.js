@@ -13,20 +13,18 @@ export default class EventListener {
         this.mouse = new Vector(0,0);
 
         this.listeners = {
-            press    :   null,
-            realse   :   null,
             click    :   null,
-            move     :   null,
-            zoom     :   null,
-            drag     :   null,
         }
+
     }
     on(name,callback){
         this.listeners[name] = callback;
+        // callback.bind(this)
     }
     trigger(name,event){
         if(this.listeners[name] != null){
-            this.listeners[name](event);
+            this.listeners[name].bind(this)(event)
+            // this.listeners[name](event);
         }
     }
     remove(name){

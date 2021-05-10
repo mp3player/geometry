@@ -3,9 +3,10 @@ import Queue from '../../collection/queue.js'
 import EventListener from "../../event/EventListener.js";
 import Transform from '../../util/transform.js'
 import Shape from "../shape.js";
-import { ShapeType } from "../../constant/ConstantShape.js";
+import { ShapeType } from "../../constant/Constant.js";
 import Helper from "../../util/component/helper.js";
-import { Polynomial } from "../../constant/ConstantPolynomial.js";
+import { Polynomial } from "../../constant/Constant.js";
+import Box from "../../box/Box.js";
 
 
 export default class Painter extends EventListener {
@@ -24,11 +25,14 @@ export default class Painter extends EventListener {
             drag    :   false,
             zoom    :   false,
         };
-
+        this.box = new Box();
         this.init();
     }
     init(){
         this.adapt();
+        let lt = this.s2c(new Vector(0,0));
+        let rb = this.s2c(new Vector(this.canvas.width,this.canvas.height));
+        this.box = new Box(lt.x,lt.y,rb.x,rb.y);
     }
     adapt(){
         window.addEventListener('resize',() => {
@@ -60,7 +64,6 @@ export default class Painter extends EventListener {
                 this.origin.y -= offset.y;
                 
             }
-
             this.trigger('mousemove',this.s2c(current))
         })
         document.addEventListener('mouseup',(e) => {
@@ -70,7 +73,11 @@ export default class Painter extends EventListener {
             this.trigger('mouseup',current)
         })
         document.addEventListener('mousewheel',(e) => {
-            this.zoom += this.zoom *= 10 / e.wheelDelta ;
+            if(this.operationConfig.zoom)
+                this.zoom += this.zoom *= 10 / e.wheelDelta ;
+            
+            // let current = this.s2c(new Vector(e.x,e.y));
+            this.trigger('mousewheel',new Vector(e.wheelDeltaX,e.wheelDeltaY));
         })
         document.addEventListener('click',(e) => {
             // console.log(e)
@@ -100,6 +107,7 @@ export default class Painter extends EventListener {
     add(shape){
 
         if(shape instanceof Shape){
+
             this.shapes.push(shape);
         }else if(shape instanceof Helper){
             this.components.push(shape)
@@ -238,10 +246,28 @@ export default class Painter extends EventListener {
             
         },1);
     }
+    translate(vec){
+        let v = new Vector(vec.x,-vec.y).scale(.1);
+        this.origin = this.origin.add(v)
+    }
     config(name,value){
         if(this.operationConfig[name] != null){
             
             this.operationConfig[name] = value ? true : false;
+        }
+    }
+    computeBox(box){
+        if(box.lt.x < this.box.lt.x){
+            this.box.lt.x = box.lt.x;
+        }
+        if(box.lt.y > this.box.lt.y){
+            this.box.lt.y = box.lt.y;
+        }
+        if(box.rb.x > this.box.rb.x){
+            this.box.rb.x = box.rb.x;
+        }
+        if(box.rb.y < this.box.rb.y){
+            this.box.rb.y = box.rb.y;
         }
     }
 }

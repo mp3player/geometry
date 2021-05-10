@@ -1,3 +1,16 @@
+const Join = {
+    MITER       :   'miter',
+    ROUND       :   'round',
+    BEVEL       :   'bevel'
+}
+
+const Polynomial = {
+    CONSTANT        :   'constant',
+    LINEAR          :   'linear',
+    SQUARE          :   'square',
+
+}
+
 const ShapeType = {
     SHAPE       :   'shape',
     LINE        :   'line',
@@ -10,4 +23,4 @@ const ShapeType = {
     HELPER      :   'helper'
 }
 
-export {ShapeType}
+export {Join,Polynomial,ShapeType}

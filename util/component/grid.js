@@ -1,6 +1,6 @@
 import Helper from "./helper.js";
 import T from '../transform.js';
-import {Color} from '../../constant/ConstantColor.js'
+import {Color} from '../../shape/image/image.js'
 
 export default class Grid extends Helper {
     constructor(sx,sy){

@@ -1,4 +1,4 @@
-import { ShapeType } from "../../constant/ConstantShape.js";
+import { ShapeType } from "../../constant/Constant.js";
 
 /**
  * the basic class of the helper 

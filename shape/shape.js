@@ -1,4 +1,5 @@
-import { Join } from "../constant/ConstantJoin.js";
+import Box from "../box/Box.js";
+import { Join } from "../constant/Constant.js";
 import EventListener from "../event/EventListener.js";
 import Vector from "../math/vector.js";
 import Style from "../util/style.js";
@@ -11,6 +12,22 @@ export default class Shape extends EventListener {
         this.rotation = 0;
         this.props = new Style(props);
         this.index = 0;
+        this.box = new Box(Infinity,-Infinity,-Infinity,Infinity);
+    }
+    //no scale and translate
+    updateBox(vec){
+        if(vec.x < this.box.lt.x){
+            this.box.lt.x = vec.x;
+        }
+        if(vec.y > this.box.lt.y){
+            this.box.lt.y = vec.y;
+        }
+        if(vec.x > this.box.rb.x){
+            this.box.rb.x = vec.x;
+        }
+        if(vec.y < this.box.rb.y){
+            this.box.rb.y = vec.y;
+        }
     }
     isTouch(vec){
         return false;

@@ -1,4 +1,4 @@
-import { Join } from "../constant/ConstantJoin.js";
+import { Join } from "../constant/Constant.js";
 import {Color} from '../shape/image/image.js'
 
 /**
