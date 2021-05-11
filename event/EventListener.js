@@ -11,6 +11,10 @@ export default class EventListener {
         this.timer = null;
         
         this.mouse = new Vector(0,0);
+        //the mouse position of the screen
+        this.screen = new Vector(0,0);
+        //the mouse position of the coordinate
+        this.coordinate = new Vector(0,0);
 
         this.listeners = {
             click    :   null,

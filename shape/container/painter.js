@@ -7,20 +7,24 @@ import { ShapeType } from "../../constant/Constant.js";
 import Helper from "../../util/component/helper.js";
 import { Polynomial } from "../../constant/Constant.js";
 import Box from "../../box/Box.js";
+import PolyFunction from "../polynomial/function.js";
 
 
 export default class Painter extends EventListener {
     constructor(canvas){
         super();
         this.origin = new Vector(0,0);
-        this.zoom = 10;
+        this.zoom = 5;
         this.canvas = canvas;
         this.canvas.width = innerWidth;
         this.canvas.height = innerHeight;
         this.pen = this.canvas.getContext('2d');
+        
         this.shapes = new Queue();
         this.components = new Queue();
         this.exps = new Queue();
+        this.images = new Queue();
+
         this.operationConfig = {
             drag    :   false,
             zoom    :   false,
@@ -40,55 +44,58 @@ export default class Painter extends EventListener {
             this.canvas.height = innerHeight;
         })
         document.addEventListener('mousedown',(e) => {
-            this.mousePress = true;
-            this.mouse.x = e.x;
-            this.mouse.y = e.y;
-            let coord = this.s2c(new Vector(e.x,e.y));
+            // this.mousePress = true;
+            console.log(this.origin)
+
+            this.updatePosition(e);
+            
             this.shapes.forEach(d => {
-                d.isTouch(coord);
+                d.isTouch(this.coordinate);
             })
 
-            this.trigger('mousedown',coord);
+            this.trigger('mousedown',this.coordinate);
         })
         document.addEventListener('mousemove',(e) => {
-            if(!this.mousePress){
-                return ;
-            }
-            document.body.style.cursor = 'pointer'
+            document.body.style.cursor = 'pointer';
+
             let current = new Vector(e.x,e.y);
-            let offset = current.sub(this.mouse);
-            this.mouse = current;
+            let offset = current.sub(this.screen);
             
-            if(this.operationConfig.drag){
+            this.updatePosition(e);
+
+            
+            if(this.operationConfig.drag && this.mousePress){
                 this.origin.x += offset.x;
                 this.origin.y -= offset.y;
-                
             }
-            this.trigger('mousemove',this.s2c(current))
+            this.trigger('mousemove',this.s2c(current));
+            this.repaint();
         })
         document.addEventListener('mouseup',(e) => {
             document.body.style.cursor = 'auto'
-            let current = this.s2c(new Vector(e.x,e.y));
+            this.updatePosition(e);
             this.mousePress = false;
-            this.trigger('mouseup',current)
+            this.trigger('mouseup',this.coordinate)
         })
         document.addEventListener('mousewheel',(e) => {
+            this.updatePosition(e);
             if(this.operationConfig.zoom)
                 this.zoom += this.zoom *= 10 / e.wheelDelta ;
             
             // let current = this.s2c(new Vector(e.x,e.y));
             this.trigger('mousewheel',new Vector(e.wheelDeltaX,e.wheelDeltaY));
+            
         })
         document.addEventListener('click',(e) => {
             // console.log(e)
-            let mouse = new Vector(e.x,e.y);
-            let p = this.s2c(mouse);
+            // let mouse = new Vector(e.x,e.y);
+            // let p = this.s2c(mouse);
             // if(this.click )
-                this.trigger('click',p)
+                // this.trigger('click',p)
             // console.log(p);
         })
         document.addEventListener('dblclick',() => {
-            this.reset()
+            // this.reset()
         })
 
     }
@@ -111,8 +118,10 @@ export default class Painter extends EventListener {
 
         }else if(shape instanceof Helper){
             this.components.push(shape)
-        }else{
+        }else if(shape instanceof PolyFunction){
             this.exps.push(shape);
+        }else{
+            this.images.push(shape);
         }
         this.repaint();
     }
@@ -123,14 +132,13 @@ export default class Painter extends EventListener {
         return this.canvas.height;
     }
     render(){
-        let T = Transform;
-        let origin = this.origin;
+        // return ;
         let pen = this.pen;
         
         this.pen.clearRect(0,0,innerWidth,innerHeight);
 
         this.components.forEach(d => {
-            d.render(pen,this.origin,this.zoom);
+            d.render(pen,this.origin,this.zoom,this.screen,this.coordinate);
         })
 
         this.shapes.forEach(d => {
@@ -181,26 +189,6 @@ export default class Painter extends EventListener {
             }
         })
         
-        // this.exps.forEach(d => {
-        //     let l = this.s2c(new Vector(0,0));
-        //     let r = this.s2c(new Vector(innerWidth,innerWidth));
-
-        //     let p = d.getPoints(l.x,r.x);
-        //     // console.log(p)
-        //     let v = this.c2s(p[0]);
-        //     pen.save();
-        //     pen.beginPath();
-        //     pen.lineWidth=2;
-        //     pen.moveTo(v.x,v.y);
-        //     for(let i=1;i<p.length;++i){
-        //         v = this.c2s(p[i]);
-        //         pen.lineTo(v.x,v.y);
-        //     }
-        //     pen.stroke();
-        //     pen.closePath();
-        //     pen.restore();
-        // })
-
         this.exps.forEach(d => {
             let l = this.s2c(new Vector(0,0));
             let r = this.s2c(new Vector(innerWidth,innerWidth));
@@ -216,6 +204,11 @@ export default class Painter extends EventListener {
             pen.stroke();
             pen.closePath();
 
+        })
+
+        this.images.forEach(d => {
+            let offset = this.c2s(d.offset).sub(d.center);
+            this.pen.putImageData(d,offset.x,offset.y);
         })
     }
     loopRender(){
@@ -272,7 +265,13 @@ export default class Painter extends EventListener {
             this.box.rb.y = box.rb.y;
         }
     }
+    updatePosition(e){
+        this.screen = new Vector(e.x,e.y);
+        this.coordinate = this.s2c(new Vector(e.x,e.y));
+
+    }
     repaint(){
+        // return ;
         this.render();
     }
 }

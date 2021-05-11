@@ -55,6 +55,7 @@
 
         import {bubbleSort} from './math/sort.js'
         import Convex,{convex} from './math/convex.js'
+        import Cursor from './util/component/cursor.js'
 
         let painter = new Painter(canvas);
 
@@ -82,7 +83,7 @@
             borderColor:Color.RED
         })
 
-        let rect = new Rectange(-40,-10,-30,10,{
+        let rect = new Rectange(-40,-10,30,10,{
             background:Color.BLACK7
         })
 
@@ -93,38 +94,17 @@
         painter.add(axes);
         painter.add(line);
         painter.add(rect);
-
-        // poly.translate(-100,0);
-        painter.add(poly);
-        console.log(painter.box)
-        // painter.add(circle);
         
-        
-    
-        
-        let arr = [];
-        await fetch("./test-data/test.plot")
-            .then(d => d.json())
-            .then(data => {
-                data.forEach(d => {
-                    let vec = new Vector(d[0],d[1]);
-                    // arr.push(vec);
-                    let c = new Circle(vec.x,vec.y)
-                    painter.add(c)
-                })
-                
-            })
-
-        painter.on('mousedown',function(e){
-            console.log(e)
-            // this.translate(e)
+        await ImageMap.load('./2345.png',(e) => {
+            // painter.add(e);
         })
-
 
         painter.on('mousewheel',function(e){
-            console.log(e)
             this.translate(e)
         })
+
+        let cursor = new Cursor();
+        // painter.add(cursor);
 
         console.log(painter)
         painter.render();

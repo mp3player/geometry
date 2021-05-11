@@ -1,3 +1,6 @@
+import { ShapeType } from "../../constant/Constant.js";
+import Vector from "../../math/vector.js";
+
 export class Color {
 
     static RED         =   'rgba(255,0,0,1)';
@@ -36,7 +39,7 @@ export class Color {
     static BLACK9       =   'rgba(0,0,0,.9)';
     constructor(r=0,g=0,b=0,a=1){
         this.r = r;
-        this.g = b;
+        this.g = g;
         this.b = b;
         this.a = a;
     }
@@ -64,9 +67,14 @@ export class Color {
     }
 }
 export default class ImageMap extends ImageData{
-    constructor(width,height){
+    constructor(width,height,dx=0,dy=0){
         super(width,height);
-        // this.data = new Uint8ClampedArray(width * height * 4);
+        this.offset = new Vector(dx,dy);
+        this.center = new Vector(width / 2,height / 2);
+        this.scale = new Vector(1,1);
+        this.rotation = 0;
+        this.index = 0;
+        this.type = ShapeType.IMAGEMAP;
     }
     setRGB(w,h,color){
         if(w > this.width || h > this.height)
@@ -75,57 +83,113 @@ export default class ImageMap extends ImageData{
         this.data[index * 4 + 0] = color.r;
         this.data[index * 4 + 1] = color.g;
         this.data[index * 4 + 2] = color.b;
-        this.data[index * 4 + 3] = color.a * 255;
+        this.data[index * 4 + 3] = 255;
+    }
+    getR(w,h){
+        if(w > this.width || h > this.height || w < 0 || h < 0)
+            return;
+        let index = h * this.width + w;
+        return this.data[index * 4 + 0];
+    }
+    getG(w,h){
+        if(w > this.width || h > this.height || w < 0 || h < 0)
+            return;
+        let index = h * this.width + w;
+        return this.data[index * 4 + 1];
+    }
+    getB(w,h){
+        if(w > this.width || h > this.height || w < 0 || h < 0)
+            return;
+        let index = h * this.width + w;
+        return this.data[index * 4 + 2];
+    }
+    getA(w,h){
+        if(w > this.width || h > this.height || w < 0 || h < 0)
+            return;
+        let index = h * this.width + w;
+        return this.data[index * 4 + 3];
     }
     getRGB(w,h){
-        if(w > this.width || h > this.height)
+        if(w > this.width || h > this.height || w < 0 || h < 0)
             return;
         let index = h * this.width + w;
         let r = this.data[index * 4 + 0];
         let g = this.data[index * 4 + 1];
         let b = this.data[index * 4 + 2];
         let a = this.data[index * 4 + 3];
-        return new Color(r,g,b,a/255);
+        return new Color(r,g,b,1);
     }
     //gray the picture
     toGray(){
+        let copy = this.copy()
+        for(let w=0;w<copy.width;++w){
+            for(let h=0;h<copy.height;++h){
+                let color = copy.getRGB(w,h);
+                let total = (color.r + color.g + color.b) / 3;
+                let c = new Color(total,total,total)
+                copy.setRGB(w,h,c);
+            }
+        }
+        return copy;
+    }
+    scale(vec){
 
+    }
+    toWave(){
+        let waves = new Array(this.height);
+        for(let h=0;h<this.height;++h){
+            waves[h] = {red:[],green:[],blue:[]}
+            for(let w=0;w<this.width;++w){
+                let r = this.getR(w,h);
+                let g = this.getG(w,h);
+                let b = this.getB(w,h);
+                waves[h].red.push(r);
+                waves[h].green.push(g);
+                waves[h].blue.push(b);
+            }
+        }
+        return waves;
     }
     //just use the red channel 
     toRed(){
-        
-        for(let w=0;w<this.width;++w){
-            for(let h=0;h<this.height;++h){
-                let color = this.getRGB(w,h);
+        let copy = this.copy()
+        for(let w=0;w<copy.width;++w){
+            for(let h=0;h<copy.height;++h){
+                let color = copy.getRGB(w,h);
                 color.g = color.r;
                 color.b = color.r;
-                this.setRGB(w,h,color);
+                copy.setRGB(w,h,color);
             }
         }
+        return copy;
     }
     //just use the green channel
     toGreen(){
-        for(let w=0;w<this.width;++w){
-            for(let h=0;h<this.height;++h){
-                let color = this.getRGB(w,h);
+        let copy = this.copy()
+        for(let w=0;w<copy.width;++w){
+            for(let h=0;h<copy.height;++h){
+                let color = copy.getRGB(w,h);
                 color.r = color.g;
                 color.b = color.g;
-                this.setRGB(w,h,color);
+                copy.setRGB(w,h,color);
             }
         }
+        return copy;
     }
     //just use the blue channel
     toBlue(){
-        for(let w=0;w<this.width;++w){
-            for(let h=0;h<this.height;++h){
-                let color = this.getRGB(w,h);
+        let copy = this.copy()
+        for(let w=0;w<copy.width;++w){
+            for(let h=0;h<copy.height;++h){
+                let color = copy.getRGB(w,h);
                 color.r = color.b;
                 color.g = color.b;
-                this.setRGB(w,h,color);
+                copy.setRGB(w,h,color);
             }
         }
+        return copy;
     }
-    load(src){
+    static load(src,cb){
         //the rule of the encode of the format of the picture 
         /**
          * like jpg
@@ -134,18 +198,97 @@ export default class ImageMap extends ImageData{
          *      gif
          *      ...etc
          */
-        // fetch(src)
-        //     .then(d => {
-        //         return d.arrayBuffer()
-        //     })
-        //     .then(d => {
-        //         console.log(d)
-        //     })
-    }
-    render(pen,dx,dy){
-        pen.putImageData(this,dx,dy)
-    }
+        fetch(src)
+            .then(d => {
+                return d.arrayBuffer()
+            })
+            .then(d => {
+                // console.log(d)
+            })
 
+        
+        let img = new Image();
+        img.src = src;
+        img.onload = function(){
+            
+            let width = img.width;
+            let height = img.height;
+            let canvas = document.createElement('canvas');
+            canvas.width = width + 2;
+            canvas.height = height + 2;
+            let pen = canvas.getContext('2d');
+            pen.drawImage(img,0,0);
+            let data = pen.getImageData(0,0,width,height).data;
+
+            let mm = new ImageMap(width,height);
+            
+            for(let i=0;i<width * height * 4;++i){
+                mm.data[i] = data[i];
+            }
+
+            cb(mm)
+        }
+    }
+    compress(size){
+        let width = this.width;
+        let height = this.height;
+
+        let nw = width / size;
+        let nh = height / size;
+        
+        let img = new ImageMap(nw,nh);
+        let count = size * size;
+
+        let w,h,i,j;
+        for(h = 0 ; h < height ; h += size){
+            for(w = 0 ; w < width ; w += size){
+                
+                let c = new Color();
+                for(i=0;i<size;++i){
+                    for(j=0;j<size;++j){
+                        if(w + i < width && h + j < height)
+                            c = c.addColor(this.getRGB(w + i,h + j))
+                    }
+                }
+                c.r /= count;
+                c.g /= count;
+                c.b /= count;
+                img.setRGB(w / size,h / size,c);
+            }
+        }
+        return img;
+    }
+    getPixelMap(){
+        // for(let w=0;w<img.width;++w){
+        //     for(let h=0;h<img.height;++h){
+        //         let c = img.getRGB(w,h);
+        //         // console.log(c)
+        //         let pos = painter.c2s(new Vector(w,-h).add(new Vector(-img.width/2,img.height / 2)));
+        //         let index = Number.parseInt(c.r / 255 * arr.length);
+        //         painter.pen.fillText(arr[index],pos.x,pos.y);
+        //         if(pos.x < lt.x)
+        //             lt.x = pos.x - 12;
+        //         if(pos.y < lt.y)
+        //             lt.y = pos.y - 12;
+        //         if(pos.x > rb.x)
+        //             rb.x = pos.x + 12;
+        //         if(pos.y > rb.y)
+        //             rb.y = pos.y + 12;
+
+
+        //     }
+        // }
+    }
+    render(pen){
+        // pen.putImageData(this,this.offset.x,this.offset.y);
+    }
+    copy(){
+        let mm = new ImageMap(this.width,this.height);
+        for(let i=0;i<this.width * this.height * 4;++i){
+            mm.data[i] = this.data[i];
+        }
+        return mm;
+    }
 }
 
 

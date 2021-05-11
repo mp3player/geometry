@@ -60,12 +60,12 @@ export default class Shape extends EventListener {
 
         if(props.borderColor){
             pen.stroke();
-            pen.closePath();
         }
         if(props.background){
             pen.fill();
-            pen.closePath();
         }
+
+        pen.closePath();
 
         pen.restore();
     }

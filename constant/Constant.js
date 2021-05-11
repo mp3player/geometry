@@ -8,7 +8,6 @@ const Polynomial = {
     CONSTANT        :   'constant',
     LINEAR          :   'linear',
     SQUARE          :   'square',
-
 }
 
 const ShapeType = {
@@ -20,7 +19,11 @@ const ShapeType = {
     BEZIERCURVE :   'bezierCurve',
     RECTANGLE   :   'rectangle',
     FUNCTION    :   'fn',
-    HELPER      :   'helper'
+
+    HELPER      :   'helper',
+    CURSOR      :   'cursor',
+    SCALE       :   'scale',
+    IMAGEMAP    :   'image'
 }
 
 export {Join,Polynomial,ShapeType}
