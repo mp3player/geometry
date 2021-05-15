@@ -39,6 +39,7 @@
         import Rectange from './shape/polygon/rectangle.js'
         import Line from './shape/path/line.js'
         import Vector from './math/vector.js'
+        import Calc from './math/calc.js'
 
         import Axes from './util/component/axes.js'
         import Grid from './util/component/grid.js'
@@ -56,6 +57,8 @@
         import {bubbleSort} from './math/sort.js'
         import Convex,{convex} from './math/convex.js'
         import Cursor from './util/component/cursor.js'
+        import Scale from './util/component/scale.js'
+
 
         let painter = new Painter(canvas);
 
@@ -92,19 +95,57 @@
 
         painter.add(grid);
         painter.add(axes);
-        painter.add(line);
-        painter.add(rect);
+        // painter.add(line);
+        // painter.add(rect);
         
-        await ImageMap.load('./2345.png',(e) => {
+        await ImageMap.load('./cat.jpeg',(e) => {
             // painter.add(e);
+            // e = e.compress(8).toGray();
+            // let w,h;
+            // let arr = ['~','!','`','#','$','^','&','*','+','-','|','=',';'];
+            // let pen = painter.pen;
+            // pen.save();
+            // pen.font = '8px sans-serif';
+            // for(w=0;w<e.width;++w){
+            //     for(h=0;h<e.height;++h){
+            //         let c = e.getRGB(w,h);
+            //         let index = Number.parseInt( ImageMap.linear(c.r / 255) * arr.length )
+            //         let str = arr[index];
+            //         let pos = painter.c2s(new Vector(w,-h)).add(new Vector(-e.width / 2 * painter.zoom,-e.height / 2 * painter.zoom));
+            //         pen.fillText(str,pos.x,pos.y)
+            //         if(str == undefined){
+            //             console.log(index,arr.length)
+            //         }
+            //         // console.log(index,arr.length);
+            //     }
+            // }
+            // pen.restore();
+
+            // painter.add(e)
         })
 
+        painter.on('mousedown',e => {
+            console.log(e)
+        })
         painter.on('mousewheel',function(e){
             this.translate(e)
+            this.render()
         })
 
         let cursor = new Cursor();
         // painter.add(cursor);
+
+        // let scale = new Scale();
+        // painter.add(scale)
+
+        // Calc.precise = .0001;
+        let v = Calc.exp(1);
+        
+
+        console.log(v)
+        console.log(Math.E)
+
+        // console.log(Calc)
 
         console.log(painter)
         painter.render();

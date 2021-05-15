@@ -28,7 +28,8 @@ export default class Cursor extends Helper{
         pen.strokeStyle = Color.BLACK;
         pen.font = '20px sans-serif';
         // console.log(pen)
-        pen.fillText(coordinate.toString(),mouse.x + 5,mouse.y - 5)
+        let str = 'x : ' + coordinate.x.toFixed(2) + ' y : ' + coordinate.y.toFixed(2);
+        pen.fillText(str,mouse.x + 5,mouse.y - 5)
 
 
         pen.restore();

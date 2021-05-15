@@ -229,6 +229,12 @@ export default class ImageMap extends ImageData{
             cb(mm)
         }
     }
+    static linear(x){
+        return x;
+    }
+    static smooth(x){
+        return 4 * Math.pow(x,3) - 3 * Math.pow(x,4);
+    }
     compress(size){
         let width = this.width;
         let height = this.height;

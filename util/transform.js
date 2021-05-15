@@ -16,24 +16,27 @@ function s2c(vec){
 
     return new Vector(cx,cy);
 }
-function c2s_t(vec,t){      //transform with the translate 
-    let sx = vec.x + innerWidth / 2;
-    let sy = innerHeight / 2 - vec.y;
-    
-    return new Vector(sx+t.x,sy+t.y);
-}
-function c2s_r(vec,r){      //transform with the rotation
-    
-}
-function c2s_s(vec,s){      //transform with the scale
-    let sx = vec.x * s + innerWidth / 2;
-    let sy = innerHeight / 2 - vec.y * s;
+
+//-------------------------
+
+function c2s_t(vec,origin,zoom){
+    let sx = vec.x * zoom + innerWidth / 2 + origin.x ;
+    let sy = innerHeight / 2 - vec.y * zoom - origin.y ;
     
     return new Vector(sx,sy);
 }
+function s2c_t(vec,origin,zoom){
+    let cx = (vec.x  - innerWidth / 2 - origin.x) / zoom ;
+    let cy = (innerHeight / 2 - vec.y - origin.y) / zoom ;
 
-export default {
-    c2s,s2c
+    return new Vector(cx,cy);
 }
 
-export {c2s,s2c}
+//------------------------------------
+
+
+export default {
+    c2s,s2c,c2s_t,s2c_t
+}
+
+export {c2s,s2c,c2s_t,s2c_t}

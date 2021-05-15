@@ -14,7 +14,7 @@ export default class Painter extends EventListener {
     constructor(canvas){
         super();
         this.origin = new Vector(0,0);
-        this.zoom = 5;
+        this.zoom = 10;
         this.canvas = canvas;
         this.canvas.width = innerWidth;
         this.canvas.height = innerHeight;
@@ -45,7 +45,7 @@ export default class Painter extends EventListener {
         })
         document.addEventListener('mousedown',(e) => {
             // this.mousePress = true;
-            console.log(this.origin)
+            // console.log(this.origin)
 
             this.updatePosition(e);
             
@@ -241,7 +241,7 @@ export default class Painter extends EventListener {
         },1);
     }
     translate(vec){
-        let v = new Vector(vec.x,-vec.y).scale(.1);
+        let v = new Vector(vec.x,-vec.y).scale(.5);
         this.origin = this.origin.add(v);
         this.repaint();
     }
@@ -271,7 +271,7 @@ export default class Painter extends EventListener {
 
     }
     repaint(){
-        // return ;
+        return ;
         this.render();
     }
 }
