@@ -7,8 +7,6 @@ export default class EventListener {
         this.mouseLPress = false;
         this.mouseMPress = false;
         this.mouseRPress = false;
-
-        this.timer = null;
         
         this.mouse = new Vector(0,0);
         //the mouse position of the screen
@@ -17,7 +15,7 @@ export default class EventListener {
         this.coordinate = new Vector(0,0);
 
         this.listeners = {
-            click    :   null,
+            
         }
 
     }

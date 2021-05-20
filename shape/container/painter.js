@@ -44,8 +44,7 @@ export default class Painter extends EventListener {
             this.canvas.height = innerHeight;
         })
         document.addEventListener('mousedown',(e) => {
-            // this.mousePress = true;
-            // console.log(this.origin)
+            this.mousePress = true;
 
             this.updatePosition(e);
             
@@ -115,7 +114,6 @@ export default class Painter extends EventListener {
         if(shape instanceof Shape){
             this.shapes.push(shape);
             this.updateBox(shape.box);
-
         }else if(shape instanceof Helper){
             this.components.push(shape)
         }else if(shape instanceof PolyFunction){
@@ -132,7 +130,6 @@ export default class Painter extends EventListener {
         return this.canvas.height;
     }
     render(){
-        // return ;
         let pen = this.pen;
         
         this.pen.clearRect(0,0,innerWidth,innerHeight);
@@ -144,6 +141,7 @@ export default class Painter extends EventListener {
         this.shapes.forEach(d => {
             switch(d.type){
                 case ShapeType.LINE:{
+
                     if(d.points.length > 0){
                         d.setProps(pen);
                         let v = this.c2s(d.points[0].add(d.offset));
@@ -154,9 +152,11 @@ export default class Painter extends EventListener {
                         }
                         d.endProps(pen);
                     }
+
                 }break;
 
                 case ShapeType.CIRCLE : {
+
                     let v = this.c2s(d.center.add(d.offset));
 
                     d.setProps(pen);
@@ -166,6 +166,7 @@ export default class Painter extends EventListener {
                 }break;
 
                 case ShapeType.POLYGON : {
+                    
                     d.setProps(pen);
                     let v = this.c2s(d.points[0]);
                     pen.moveTo(v.x,v.y);
@@ -174,6 +175,7 @@ export default class Painter extends EventListener {
                         pen.lineTo(v.x,v.y);
                     }
                     d.endClose(pen);
+                
                 }break;
 
                 case ShapeType.CURVE : {
@@ -181,15 +183,32 @@ export default class Painter extends EventListener {
                 }break;
 
                 case ShapeType.RECTANGLE : {
+                    
                     d.setProps(pen);
                     let lt = this.c2s(d.lt);
                     pen.fillRect(lt.x,lt.y,d.width * this.zoom ,d.height * this.zoom);   
                     d.endClose(pen);
+
                 }break;
+
+                case ShapeType.RING : {
+                    
+                    d.update();
+                    d.setProps(pen);
+                    let v = this.c2s(d.points[0]);
+                    pen.moveTo(v.x,v.y);
+                    for(let i=1;i<d.points.length;++i){
+                        v = this.c2s(d.points[i]);
+                        pen.lineTo(v.x,v.y);
+                    }
+                    d.endClose(pen);
+
+                }
             }
         })
         
         this.exps.forEach(d => {
+
             let l = this.s2c(new Vector(0,0));
             let r = this.s2c(new Vector(innerWidth,innerWidth));
 
@@ -207,9 +226,12 @@ export default class Painter extends EventListener {
         })
 
         this.images.forEach(d => {
+
             let offset = this.c2s(d.offset).sub(d.center);
             this.pen.putImageData(d,offset.x,offset.y);
+
         })
+
     }
     loopRender(){
         let a = () => {
@@ -245,9 +267,12 @@ export default class Painter extends EventListener {
         this.origin = this.origin.add(v);
         this.repaint();
     }
+    scale(s){
+        this.zoom += s;
+        this.repaint();
+    }
     config(name,value){
         if(this.operationConfig[name] != null){
-            
             this.operationConfig[name] = value ? true : false;
         }
     }
@@ -268,7 +293,6 @@ export default class Painter extends EventListener {
     updatePosition(e){
         this.screen = new Vector(e.x,e.y);
         this.coordinate = this.s2c(new Vector(e.x,e.y));
-
     }
     repaint(){
         return ;

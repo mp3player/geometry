@@ -36,15 +36,16 @@
         import Painter from './shape/container/painter.js'
         import Circle from './shape/polygon/circle.js'
         import Polygon from './shape/polygon/polygon.js'
+        import Ring from './shape/ring/ring.js'
         import Rectange from './shape/polygon/rectangle.js'
         import Line from './shape/path/line.js'
         import Vector from './math/vector.js'
+        import Complex from './math/complex.js'
         import Calc from './math/calc.js'
+        import ShapeLib from './math/shapeLib.js'
 
         import Axes from './util/component/axes.js'
         import Grid from './util/component/grid.js'
-
-        // import {Color} from './constant/ConstantColor.js'
 
         import PerlinNoise from './math/noise/PerlinNoise.js'
 
@@ -62,92 +63,46 @@
 
         let painter = new Painter(canvas);
 
-        let circle = new Circle(0,0,10,{
-            background:Color.RED4,
-            borderColor:Color.RED7,
-            borderWidth:1
-        });
-        let poly = new Polygon([
-            new Vector(0,0),
-            new Vector(10,0),
-            new Vector(10,10),
-        ],{
-            borderWidth:1,
-            background:Color.RED7,
-            borderColor : Color.PURPLE,
-        });
-
-        let line = new Line([
-            new Vector(-10,-10),
-            new Vector(-20,0),
-            new Vector(-10,-15),
-        ],{
-            borderWidth:1,
-            borderColor:Color.RED
-        })
-
-        let rect = new Rectange(-40,-10,30,10,{
-            background:Color.BLACK7
-        })
 
         let axes = new Axes(Color.RED,Color.GREEN);
         let grid = new Grid(10,10);
 
         painter.add(grid);
         painter.add(axes);
-        // painter.add(line);
-        // painter.add(rect);
-        
-        await ImageMap.load('./cat.jpeg',(e) => {
-            // painter.add(e);
-            // e = e.compress(8).toGray();
-            // let w,h;
-            // let arr = ['~','!','`','#','$','^','&','*','+','-','|','=',';'];
-            // let pen = painter.pen;
-            // pen.save();
-            // pen.font = '8px sans-serif';
-            // for(w=0;w<e.width;++w){
-            //     for(h=0;h<e.height;++h){
-            //         let c = e.getRGB(w,h);
-            //         let index = Number.parseInt( ImageMap.linear(c.r / 255) * arr.length )
-            //         let str = arr[index];
-            //         let pos = painter.c2s(new Vector(w,-h)).add(new Vector(-e.width / 2 * painter.zoom,-e.height / 2 * painter.zoom));
-            //         pen.fillText(str,pos.x,pos.y)
-            //         if(str == undefined){
-            //             console.log(index,arr.length)
-            //         }
-            //         // console.log(index,arr.length);
-            //     }
-            // }
-            // pen.restore();
-
-            // painter.add(e)
-        })
-
-        painter.on('mousedown',e => {
+        painter.on('mousedown',function(e){
             console.log(e)
+        })
+        painter.on('mousemove',function(e){
+            if(this.mousePress)
+                console.log(this)
         })
         painter.on('mousewheel',function(e){
             this.translate(e)
             this.render()
         })
 
-        let cursor = new Cursor();
-        // painter.add(cursor);
+        let tri = new Ring([
+            new Vector(0,0),
+            new Vector(10,0),
+            new Vector(10,10),
 
-        // let scale = new Scale();
-        // painter.add(scale)
+        ],1.0,{
+            background:Color.RED
+        })
 
-        // Calc.precise = .0001;
-        let v = Calc.exp(1);
-        
+        window.tri = tri;
 
-        console.log(v)
-        console.log(Math.E)
+        let points = ShapeLib.arrow(10);
 
-        // console.log(Calc)
+        let square = new SquareExpression(.1,.2,3);
+        console.log(square)
+        painter.add(square);
 
-        console.log(painter)
+        let polygon = new Polygon(points,{
+            background:Color.RED
+        })
+        painter.add(polygon);
+
         painter.render();
     </script>
 </body>

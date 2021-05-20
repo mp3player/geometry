@@ -16,6 +16,7 @@ const ShapeType = {
     POLYGON     :   'polygon',
     CIRCLE      :   'circle',
     CURVE       :   'curve',
+    RING        :   'ring',
     BEZIERCURVE :   'bezierCurve',
     RECTANGLE   :   'rectangle',
     FUNCTION    :   'fn',

@@ -18,7 +18,7 @@ export default class Complex{
         return new Complex(this.r - c.r , this.i - c.i);
     }
     mul(c){
-        return new Complex(this.r * c.r - this.i * c.i , this.r * c.i + vec.r * c.i);
+        return new Complex(this.r * c.r - this.i * c.i , this.r * c.i + this.i * c.r);
     }
     reverse(){
         return new Complex(-this.r , -this.i);

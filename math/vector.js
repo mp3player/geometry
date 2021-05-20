@@ -12,7 +12,11 @@ export default class Vector {
             this.y / len
         );
     }
+    equal(vec){
+        return this.x == vec.x && this.y == vec.y;
+    }
     add(vec){
+        // console.log('vec',vec)
         return new Vector(this.x + vec.x , this.y + vec.y);
     }
     sub(vec){
