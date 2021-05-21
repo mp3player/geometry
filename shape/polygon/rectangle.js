@@ -9,7 +9,17 @@ export default class Rectangle extends Shape {
         this.lt = new Vector(x,y);
         this.width = width;
         this.height = height;
-        this.type = ShapeType.RECTANGLE;
+        this.type = ShapeType.POLYGON;
+        this.points = []
+        this.init();
+
+    }
+    init(){
+        let lt = this.lt.copy();
+        let lb = new Vector(lt.x,lt.y + this.height);
+        let rb = new Vector(lt.x + this.width,lt.y + this.height);
+        let rt = new Vector(lt.x + this.width,lt.y);
+        this.points = this.points.concat(lt,lb,rb,rt)
         this.computeBox();
     }
     //no scale and translate

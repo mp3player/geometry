@@ -14,7 +14,7 @@ export default class SquareExpression extends PolyFunction {
         return this.a * x * x + this.b * x + this.c;
     }
     getDifferential(){
-        return new LinearExpression(2 * this.a,b);
+        return new LinearExpression(2 * this.a,this.b);
     }
     
 }

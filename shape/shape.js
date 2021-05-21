@@ -73,7 +73,10 @@ export default class Shape extends EventListener {
         this.offset = this.offset.add(new Vector(x,y));
     }
     rotate(r){
-        this.rotation += r;
+        this.rotation = r;
+    }
+    zoom(sx,sy){
+        this.scale = new Vector(sx,sy);
     }
     isTouch(vec){
         return false;

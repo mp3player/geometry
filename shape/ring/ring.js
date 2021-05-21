@@ -61,6 +61,8 @@ export default class Ring extends Shape {
     }
     
     computeBox(){
-
+        for(let i=0;i<this.points.length;++i){
+            this.updateBox(this.points[i]);
+        }
     }
 }

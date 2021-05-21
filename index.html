@@ -56,7 +56,7 @@
         import PolynomialExpression from './shape/polynomial/polynomial-expression.js'
 
         import {bubbleSort} from './math/sort.js'
-        import Convex,{convex} from './math/convex.js'
+        import Convex from './math/convex.js'
         import Cursor from './util/component/cursor.js'
         import Scale from './util/component/scale.js'
 
@@ -89,21 +89,50 @@
         ],1.0,{
             background:Color.RED
         })
+        let arr = []
+        await fetch('./test-data/test.plot')
+            .then(d => d.json())
+            .then(d => {
+                console.log(d)
+                d.forEach(e => {
 
-        window.tri = tri;
+                    arr.push(new Vector(e[0],e[1]))
+                })
+            })
+        
+        let convex = Convex.getConvex(arr);
 
-        let points = ShapeLib.arrow(10);
-
-        let square = new SquareExpression(.1,.2,3);
-        console.log(square)
-        painter.add(square);
-
-        let polygon = new Polygon(points,{
-            background:Color.RED
+        let polygon = new Polygon(convex,{
+            borderWidth:2
         })
-        painter.add(polygon);
 
-        painter.render();
+        painter.add(polygon)
+
+
+        let rect = new Rectange(-10,-10,20,40,{
+            background:Color.RED
+        });
+
+        painter.add(rect);
+
+        rect.translate(10,10);
+        polygon.translate(10,10);
+
+        let i = 0;
+        setInterval(() => {
+            i += .01;
+            rect.rotate(i);
+            polygon.rotate(i);
+
+        },10)
+
+
+        
+
+        
+        
+
+        painter.loopRender();
     </script>
 </body>
 </html>

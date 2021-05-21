@@ -25,8 +25,15 @@ export default class Vector {
     mul(vec){
         return new Vector(this.x * vec.x , this.y * vec.y);
     }
-    scale(s){
-        return new Vector(s,s).mul(this);
+    rotate(angle){
+        let complex = new Complex(Math.cos(angle),Math.sin(angle));
+        let _this = this.toComplex();
+        return _this.mul(complex).toVector();
+    }
+    scale(sx,sy){
+        if(!sy)
+            sy = sx;
+        return new Vector(sx,sy).mul(this);
     }
     length(){
         return Math.hypot(this.x,this.y);

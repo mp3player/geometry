@@ -138,23 +138,27 @@ export default class Painter extends EventListener {
             d.render(pen,this.origin,this.zoom,this.screen,this.coordinate);
         })
 
+        //apply translate rotate and scale 
+        //the first transform is rotate ,and then scale ,translate at last
         this.shapes.forEach(d => {
             switch(d.type){
                 case ShapeType.LINE:{
-
                     if(d.points.length > 0){
                         d.setProps(pen);
-                        let v = this.c2s(d.points[0].add(d.offset));
+                        let p0 = d.points[0];
+                        p0 = p0.rotate(d.rotation);
+                        let v = this.c2s(p0.add(d.offset).add(d.offset));
                         pen.moveTo(v.x,v.y);
                         for(let i=1;i<d.points.length;++i){
-                            v = this.c2s(d.points[i].add(d.offset));
+                            let pi = d.points[i];
+                            pi = pi.rotate(d.rotation)
+                            v = this.c2s(pi);
                             pen.lineTo(v.x,v.y);
                         }
                         d.endProps(pen);
                     }
 
                 }break;
-
                 case ShapeType.CIRCLE : {
 
                     let v = this.c2s(d.center.add(d.offset));
@@ -164,14 +168,17 @@ export default class Painter extends EventListener {
                     d.endClose(pen);
 
                 }break;
-
                 case ShapeType.POLYGON : {
                     
                     d.setProps(pen);
-                    let v = this.c2s(d.points[0]);
+                    let p0 = d.points[0];
+                    p0 = p0.rotate(d.rotation);
+                    let v = this.c2s(p0.add(d.offset));
                     pen.moveTo(v.x,v.y);
                     for(let i=1;i<d.points.length;++i){
-                        v = this.c2s(d.points[i]);
+                        let pi = d.points[i];
+                        pi = pi.rotate(d.rotation);
+                        v = this.c2s(pi.add(d.offset));
                         pen.lineTo(v.x,v.y);
                     }
                     d.endClose(pen);
@@ -182,23 +189,14 @@ export default class Painter extends EventListener {
 
                 }break;
 
-                case ShapeType.RECTANGLE : {
-                    
-                    d.setProps(pen);
-                    let lt = this.c2s(d.lt);
-                    pen.fillRect(lt.x,lt.y,d.width * this.zoom ,d.height * this.zoom);   
-                    d.endClose(pen);
-
-                }break;
-
                 case ShapeType.RING : {
                     
                     d.update();
                     d.setProps(pen);
-                    let v = this.c2s(d.points[0]);
+                    let v = this.c2s(d.points[0].add(d.offset));
                     pen.moveTo(v.x,v.y);
                     for(let i=1;i<d.points.length;++i){
-                        v = this.c2s(d.points[i]);
+                        v = this.c2s(d.points[i].add(d.offset));
                         pen.lineTo(v.x,v.y);
                     }
                     d.endClose(pen);
@@ -206,7 +204,6 @@ export default class Painter extends EventListener {
                 }
             }
         })
-        
         this.exps.forEach(d => {
 
             let l = this.s2c(new Vector(0,0));
@@ -224,14 +221,12 @@ export default class Painter extends EventListener {
             pen.closePath();
 
         })
-
         this.images.forEach(d => {
 
             let offset = this.c2s(d.offset).sub(d.center);
             this.pen.putImageData(d,offset.x,offset.y);
 
         })
-
     }
     loopRender(){
         let a = () => {
