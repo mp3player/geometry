@@ -1,12 +1,18 @@
 import Vector from "./vector.js";
 
 export default class Complex{
-    constructor(r,i){
+    constructor(r=0,i=0){
         this.r = r;
         this.i = i;
     }
-    length(){
+    mod(){
         return Math.hypot(this.r,this.i);
+    }
+    normalize(){
+        let mod = this.mod();
+        if(mod == 0)
+            return this;
+        return new Complex(this.r / mod , this.i / mod);
     }
     scale(s){
         return new Complex(this.r * s,this.i * s);
@@ -31,5 +37,8 @@ export default class Complex{
     }
     toVector(){
         return new Vector(this.r,this.i);
+    }
+    toString(){
+        return `r : ${this.r} , i : ${this.i}`
     }
 }

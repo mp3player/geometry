@@ -169,19 +169,20 @@ export default class Painter extends EventListener {
 
                 }break;
                 case ShapeType.POLYGON : {
-                    
-                    d.setProps(pen);
-                    let p0 = d.points[0];
-                    p0 = p0.rotate(d.rotation);
-                    let v = this.c2s(p0.add(d.offset));
-                    pen.moveTo(v.x,v.y);
-                    for(let i=1;i<d.points.length;++i){
-                        let pi = d.points[i];
-                        pi = pi.rotate(d.rotation);
-                        v = this.c2s(pi.add(d.offset));
-                        pen.lineTo(v.x,v.y);
+                    if(d.points.length > 0){
+                        d.setProps(pen);
+                        let p0 = d.points[0];
+                        p0 = p0.rotate(d.rotation);
+                        let v = this.c2s(p0.add(d.offset));
+                        pen.moveTo(v.x,v.y);
+                        for(let i=1;i<d.points.length;++i){
+                            let pi = d.points[i];
+                            pi = pi.rotate(d.rotation);
+                            v = this.c2s(pi.add(d.offset));
+                            pen.lineTo(v.x,v.y);
+                        }
+                        d.endClose(pen);
                     }
-                    d.endClose(pen);
                 
                 }break;
 
