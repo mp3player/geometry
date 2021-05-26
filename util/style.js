@@ -20,6 +20,7 @@ export default class Style {
         this.borderColor = opt.borderColor ? opt.borderColor : Color.BLACK;
         this.borderRadius = opt.borderRadius || 0;
         this.borderWidth = opt.borderWidth || 1;
+        console.log(opt)
         this.join = opt.join || Join.MITER;
     }
 }

@@ -1,11 +1,21 @@
-export default class {
-    static linearInterpolation(){
-        console.log(1)
+export default class Interpolation{
+
+    
+
+    static linearInterpolation(x0,x1,w){
+        return (x1 - x0) * w + x0;
     }
-    static newtonInterpolation(){
+
+    // newton polynomial 
+    static newtonPolynomial(){
 
     }
-    static staticLInterpolation(){
+
+    //lagrange polynomial
+    static lagrangePolynomial(){
 
     }
+
+    //
+
 }

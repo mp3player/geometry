@@ -2,10 +2,10 @@ import { ShapeType } from "../../constant/Constant.js";
 import Vector from "../../math/vector.js";
 import Shape from "../shape.js";
 export default class Ring extends Shape {
-    constructor(points,offset = 1,props){
+    constructor(points,span = 1,props){
         super(props);
-        this.type = ShapeType.RING;
-        this.offset = offset ;
+        this.type = ShapeType.POLYGON;
+        this.span = span ;
         this.points = [];
         this.inner = [];
         this.outer = [];
@@ -34,9 +34,11 @@ export default class Ring extends Shape {
             let rad = Math.acos(v0.dot(v1));
 
             let sin = Math.sin(rad);
-            let len = this.offset / sin;
+            let len = this.span / sin;
 
             // console.log(v0.length(),v1.length())
+
+            // console.log(this.offset)
 
             let split = v0.add(v1).scale(len);
 
@@ -59,7 +61,6 @@ export default class Ring extends Shape {
         this.points = this.inner.concat([p[0]]).concat(outer);
         this.outer = outer;
     }
-    
     computeBox(){
         for(let i=0;i<this.points.length;++i){
             this.updateBox(this.points[i]);

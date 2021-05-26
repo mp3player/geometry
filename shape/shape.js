@@ -39,8 +39,8 @@ export default class Shape extends EventListener {
         pen.fillStyle = props.background;
         pen.strokeStyle = props.borderColor;
         pen.lineWidth = props.borderWidth;
-        pen.lineCap = Join.ROUND;
-        pen.lineJoin = Join.ROUND;
+        pen.lineCap = props.join;
+        pen.lineJoin = props.join;
     }
     endClose(pen){
         let props = this.props;
@@ -70,7 +70,7 @@ export default class Shape extends EventListener {
         pen.restore();
     }
     translate(x,y){
-        this.offset = this.offset.add(new Vector(x,y));
+        this.offset = new Vector(x,y);
     }
     rotate(r){
         this.rotation = r;

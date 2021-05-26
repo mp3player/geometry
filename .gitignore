@@ -4,4 +4,5 @@
 cat.jpeg
 s.png
 cat.jpg
-./test-data/
+test-data/
+math/gl-matrix.js

@@ -59,6 +59,7 @@
         import Convex from './math/convex.js'
         import Cursor from './util/component/cursor.js'
         import Scale from './util/component/scale.js'
+        import {Join} from './constant/Constant.js'
 
 
         let painter = new Painter(canvas);
@@ -81,56 +82,7 @@
             this.render()
         })
 
-        let tri = new Ring([
-            new Vector(0,0),
-            new Vector(10,0),
-            new Vector(10,10),
-
-        ],1.0,{
-            background:Color.RED
-        })
-        let arr = []
-        await fetch('./test-data/test.plot')
-            .then(d => d.json())
-            .then(d => {
-                console.log(d)
-                d.forEach(e => {
-
-                    arr.push(new Vector(e[0],e[1]))
-                })
-            })
-        
-        let convex = Convex.getConvex(arr);
-
-        let polygon = new Polygon(convex,{
-            borderWidth:2
-        })
-
-        painter.add(polygon)
-
-
-        let rect = new Rectange(-10,-10,20,40,{
-            background:Color.RED
-        });
-
-        painter.add(rect);
-
-        rect.translate(10,10);
-        polygon.translate(10,10);
-
-        let i = 0;
-        setInterval(() => {
-            i += .01;
-            rect.rotate(i);
-            polygon.rotate(i);
-
-        },10)
-
-
-        
-
-        
-        
+     
 
         painter.loopRender();
     </script>
