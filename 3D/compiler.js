@@ -201,6 +201,7 @@ function i_vec4(gl=new WebGL2RenderingContext,index,vec4){
     gl.vertexAttribPointer(index,4,gl.FLOAT,false,0,0)
     gl.enableVertexAttribArray(1);
     gl.bindBuffer(gl.ARRAY_BUFFER,buff);
+    return buff;
     // gl.disableVertexAttribArray(index);
 }
 
@@ -209,6 +210,7 @@ function i_vec3(gl,index,vec3){
     gl.vertexAttribPointer(index,3,gl.FLOAT,false,0,0)
     gl.enableVertexAttribArray(index);
     gl.bindBuffer(gl.ARRAY_BUFFER,buff);
+    return buff;
     // gl.disableVertexAttribArray(index);
 }
 
@@ -217,24 +219,12 @@ function i_vec2(gl,index,vec2){
     gl.vertexAttribPointer(index,2,gl.FLOAT,false,0,0)
     gl.enableVertexAttribArray(index);
     gl.bindBuffer(gl.ARRAY_BUFFER,buff);
+    return buff;
     // gl.disableVertexAttribArray(index);
 }
 
-function render(gl){
 
-
-    let a = () => {
-        gl.clearColor(0,0,0,1);
-        gl.clear(gl.COLOR_BUFFER_BIT);
-
-        // requestAnimationFrame(a);
-    }
-    a();
-
-}
-
-
-const Compiler = new Object();
+const Compiler = {};
 Compiler.compileShader = compileShader;
 Compiler.compileProgram = compileProgram;
 Compiler.u_mat4 = u_mat4;
@@ -256,8 +246,6 @@ Compiler.ebo = ebo;
 Compiler.tbo = tbo;
 Compiler.tboa = tboa;
 Compiler.fbo = fbo;
-
-Compiler.render = render;
 
 export default Compiler;
 

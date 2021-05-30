@@ -141,6 +141,8 @@ export default class Painter extends EventListener {
         //apply translate rotate and scale 
         //the first transform is rotate ,and then scale ,translate at last
         this.shapes.forEach(d => {
+            if(d == null)
+                d.type == 'null'
             switch(d.type){
                 case ShapeType.LINE:{
                     if(d.points.length > 0){

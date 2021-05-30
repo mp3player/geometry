@@ -286,7 +286,7 @@ export default class ImageMap extends ImageData{
         // }
     }
     render(pen){
-        // pen.putImageData(this,this.offset.x,this.offset.y);
+        pen.putImageData(this,this.offset.x + pen.canvas.width / 3,pen.canvas.height / 4 - this.offset.y);
     }
     copy(){
         let mm = new ImageMap(this.width,this.height);
