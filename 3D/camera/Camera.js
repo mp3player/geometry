@@ -1,18 +1,14 @@
 import {vec3,mat4} from '../../math/gl-matrix/index.js'
-import Object3D from '../object3D.js';
-import Camera from './Camera.js';
+import Object3D from '../object3D.js'
 
-
-class PerspectiveCamera extends Camera{
-    constructor(fov=45,aspect=1,near=0.1,far=10000){
+export default class Camera extends Object3D {
+    constructor(){
         super();
-        this.type = 'perspectiveCamera';
-        this.aspect = aspect;
-        this.fov = fov;
-        this.near = near;
-        this.far = far;
+        this.renderTarget = null;
+        this.renderToScreen = true;
         this.projectionMatrix = mat4.create();
         this.viewMatrix = mat4.create();
+        
     }
     control(ele){
         ele.onmousedown = (e) => {
@@ -56,9 +52,4 @@ class PerspectiveCamera extends Camera{
 
         }
     }
-    update(){
-        mat4.perspective(this.projectionMatrix,this.fov * Math.PI / 180,this.aspect,this.near,this.far);
-        mat4.lookAt(this.viewMatrix,this.position,this.lookAt,this.up);
-    }
 }
-export default PerspectiveCamera;

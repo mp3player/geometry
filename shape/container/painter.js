@@ -134,6 +134,13 @@ export default class Painter extends EventListener {
         
         this.pen.clearRect(0,0,innerWidth,innerHeight);
 
+        this.images.forEach(d => {
+
+            let offset = this.c2s(d.offset).sub(d.center);
+            this.pen.putImageData(d,offset.x,offset.y);
+
+        })
+
         this.components.forEach(d => {
             d.render(pen,this.origin,this.zoom,this.screen,this.coordinate);
         })
@@ -224,12 +231,7 @@ export default class Painter extends EventListener {
             pen.closePath();
 
         })
-        this.images.forEach(d => {
-
-            let offset = this.c2s(d.offset).sub(d.center);
-            this.pen.putImageData(d,offset.x,offset.y);
-
-        })
+        
     }
     loopRender(){
         let a = () => {

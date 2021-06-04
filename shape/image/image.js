@@ -109,6 +109,30 @@ export default class ImageMap extends ImageData{
         let index = h * this.width + w;
         return this.data[index * 4 + 3];
     }
+    setR(w,h,r){
+        if(w > this.width || h > this.height || w < 0 || h < 0)
+            return;
+        let index = h * this.width + w;
+        this.data[index * 4 + 0] = r;
+    }
+    setG(w,h,g){
+        if(w > this.width || h > this.height || w < 0 || h < 0)
+            return;
+        let index = h * this.width + w;
+        this.data[index * 4 + 1] = g;
+    }
+    setB(w,h,b){
+        if(w > this.width || h > this.height || w < 0 || h < 0)
+            return;
+        let index = h * this.width + w;
+        this.data[index * 4 + 2] = b;
+    }
+    setA(w,h,a){
+        if(w > this.width || h > this.height || w < 0 || h < 0)
+            return;
+        let index = h * this.width + w;
+        this.data[index * 4 + 3] = a
+    }
     getRGB(w,h){
         if(w > this.width || h > this.height || w < 0 || h < 0)
             return;

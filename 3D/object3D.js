@@ -1,5 +1,5 @@
 
-import {vec3,mat4} from '../math/gl-matrix/index.js'
+import {vec3,mat4,mat3} from '../math/gl-matrix/index.js'
 
 export default class Object3D{
     constructor(){
@@ -10,6 +10,7 @@ export default class Object3D{
         this.up = vec3.clone([0,1,0]);
 
         this.modelMatrix = mat4.create();
+        this.normalMatrix = mat3.create();
         this.translate = vec3.clone([0,0,0]);
         this.rotation = vec3.clone([0,0,0]);
         this.scale = vec3.clone([1,1,1]);
@@ -44,13 +45,16 @@ export default class Object3D{
     }
     update(){
         this.modelMatrix = mat4.create();
+        mat4.translate(this.modelMatrix,this.modelMatrix,this.translate);
         mat4.rotateX(this.modelMatrix,this.modelMatrix,this.rotation[0]);
         mat4.rotateY(this.modelMatrix,this.modelMatrix,this.rotation[1]);
         mat4.rotateZ(this.modelMatrix,this.modelMatrix,this.rotation[2]);
         
-        mat4.translate(this.modelMatrix,this.modelMatrix,this.translate);
-
         mat4.scale(this.modelMatrix,this.modelMatrix,this.scale);
-        // console.log(this.modelMatrix)
+
+        mat3.fromMat4(this.normalMatrix,this.modelMatrix);
+        mat3.invert(this.normalMatrix,this.normalMatrix)
+        mat3.transpose(this.normalMatrix,this.normalMatrix);
+
     }
 }

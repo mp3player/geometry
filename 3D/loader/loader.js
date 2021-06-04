@@ -1,4 +1,6 @@
-import Mesh from "./Mesh.js";
+import Material from "../material/Material.js";
+import Mesh from "../material/Mesh.js";
+import Geometry from "../material/Geometry.js";
 
 class ObjLoader {
     load(url,cb){
@@ -43,13 +45,14 @@ class ObjLoader {
                 uv.push(arr);
             }
             else if(p_face.test(d)){
+                // console.log(d)
                 d = d.replace(/f /g,'').split(/[\s]/);
+                // console.log(d)
                 let pi = [];
                 let ui = [];
                 let ni = [];
                 d.forEach(e => {
                     e = e.split(/\//);
-
                     pi.push(Number(e[0]) - 1);
                     ui.push(Number(e[1]) - 1);
                     ni.push(Number(e[2]) - 1);
@@ -58,25 +61,26 @@ class ObjLoader {
             }
 
         })
-        let p = [];
-        let u = [];
-        let n = []
-        for(let i in index){
-            let vertex = index[i].pi;
-            let textureCoord = index[i].ui;
-            let normalCoord = index[i].ni;
+        let p = [],u = [],n = [];
 
-            p = p.concat(position[vertex[0]])
-            p = p.concat(position[vertex[1]])
-            p = p.concat(position[vertex[2]])
+        for(let i=0;i<index.length;++i){
+            let item = index[i];
+            let pIndex = item.pi;
+            let uIndex = item.ui;
+            let nIndex = item.ni;
+            
+            p = p.concat(position[pIndex[0]])
+            p = p.concat(position[pIndex[1]])
+            p = p.concat(position[pIndex[2]])
 
-            u = u.concat(uv[textureCoord[0]])
-            u = u.concat(uv[textureCoord[1]])
-            u = u.concat(uv[textureCoord[2]])
+            u = u.concat(uv[uIndex[0]])
+            u = u.concat(uv[uIndex[1]])
+            u = u.concat(uv[uIndex[2]])
 
-            n = n.concat(normal[normalCoord[0]])
-            n = n.concat(normal[normalCoord[1]])
-            n = n.concat(normal[normalCoord[2]])
+            n = n.concat(normal[nIndex[0]])
+            n = n.concat(normal[nIndex[1]])
+            n = n.concat(normal[nIndex[2]])
+            
         }
 
         position = p;
@@ -87,7 +91,10 @@ class ObjLoader {
         //     position,normal,uv
         // };
 
-        return new Mesh(position,uv,normal);
+        return new Mesh(
+            new Geometry(position,uv,normal),
+            new Material
+        );
     }
 }
 

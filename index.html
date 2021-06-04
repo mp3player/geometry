@@ -8,7 +8,7 @@
     <style>
         *{margin:0;padding:0;}
         canvas{
-            position:absolute;border:1px solid red;
+            position:absolute;
         }
         .tools {
             position:absolute;top:0;left:0;width:100%;height:60px;background:red;
@@ -65,9 +65,15 @@
         //3D
         import BackRender from './3D/backRender.js'
         import PerspectiveCamera from './3D/camera/PerspectiveCamera.js'
-        import ObjLoader from './3D/loader.js'
+        import OrthoCamera from './3D/camera/OrthoCamera.js'
+        import ObjLoader from './3D/loader/loader.js'
 
+        import Geometry from './3D/material/Mesh.js'
+        import Material from './3D/material/Material.js'
+        import Texture from './3D/texture/Texture.js'
 
+        import {ALight,DLight,PLight,SLight} from './3D/light/Light.js'
+        
         // let painter = new Painter(canvas);
 
 
@@ -77,31 +83,95 @@
         // painter.add(grid);
         // painter.add(axes);
 
+        // painter.render();
+
+        // painter.loopRender();
+
+
         let loader = new ObjLoader();
         let br = new BackRender(500,500,canvas);
         let camera = new PerspectiveCamera();
-        camera.position = new Float32Array([10,0,0])
+        camera.position = new Float32Array([0,10,10])
         camera.up = new Float32Array([0,1,0])
-        
-        // console.log(br)
-        // document.body.append(br.canvas);
-        camera.control(canvas)
+
+        camera.control(document);
+
+        // let c = new OrthoCamera(-2,2,-2,2,-10,10);
+
+        let mesh = null;
+
+        let material = new Material({
+            useShadow:true,
+            useLight:true,
+            map:new Texture("./floor.jpg"),
+            normalMap:new Texture('./floor-normal.jpg')
+        })
+
+        let pMaterial = new Material ({
+            color:[1,1,1],
+            receiveShadow:true
+        });
     
         loader.load('./3D/model/rect.obj',(d) => {
-            br.add(d)
-
             
+            br.addModel(d)
+            // d.translateY(1)
+            // d.material.useLight = false;
+            d.material = material;
         })
 
         loader.load('./3D/model/aaa.obj',(d) => {
-            br.add(d)
-            d.translateX(1);
+            br.addModel(d);
+            mesh = d;
+            d.material.useLight = false;
+            d.material.useShadow = true;
+            d.material.map = new Texture('./cat.jpg');
+            d.translateX(4);
+            d.translateY(1);
+            console.log(d.material)
+        })
+        
+
+        loader.load('./3D/model/plane.obj',(d) => {
+            br.addModel(d);
+            d.material = pMaterial;
+            d.rotateX(Math.PI / 2);
+            
         })
 
+        
+        let aLight = new ALight([1,1,1],.1);
+        let dLight = new DLight([1,1,1],1,[0,0,0]);
 
-        setInterval(() => {
+        br.addLight(aLight);
+        br.addLight(dLight);
+
+        dLight.position = [10,10,20];
+
+        console.log(dLight.shadowCamera)
+        dLight.shadowCamera.left = -20;
+        dLight.shadowCamera.right = 20;
+        dLight.shadowCamera.bottom = -20;
+        dLight.shadowCamera.top = 20;
+        dLight.shadowCamera.near = .1;
+        dLight.shadowCamera.near = 100;
+
+        // dLight.shadowCamera.control(document)
+
+
+        let i = 0;
+        let x=0,y=0,z=0;
+        let a = () => {
+            
             br.render(camera);
-        },10)
+            if(mesh){
+                mesh.rotateX(.01);
+                mesh.rotateY(.01);
+            }
+            // if(++i < 20)
+                requestAnimationFrame(a);
+        }
+        a();
 
     </script>
 </body>
