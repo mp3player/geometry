@@ -36,6 +36,7 @@ export default class Camera extends Object3D {
             }
         }
         ele.onmousewheel = (e) => {
+            // console.log(this.position)
             let len = vec3.dist(this.position,this.lookAt)
 
             let dis = e.deltaY;

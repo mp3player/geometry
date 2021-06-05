@@ -7,15 +7,13 @@ const ShadowVertexShader = `#include<version>
 
 #include<matrix>
 
-
 layout(location = 0) in vec3 position;
-
 
 out vec3 oPosition;
 
 void main(){
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position,1.0f);
-    oPosition = gl_Position.rgb;
+    oPosition = gl_Position.xyz;
 }
 
 `

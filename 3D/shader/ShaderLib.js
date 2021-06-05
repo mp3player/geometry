@@ -1,5 +1,5 @@
 const VERSION = '#version 300 es';
-const PRECISION = 'precision mediump float;'
+const PRECISION = 'precision lowp float;'
 const MATRIX = `
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;

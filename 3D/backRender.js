@@ -77,7 +77,7 @@ export default class backRender{
         // gl.useProgram(program);
         if(material.map){
             if(!material.map.tbo){
-                let t1 = Compiler.tbo(gl,material.map.img);
+                let t1 = Compiler.tbo(gl,material.map.url);
                 material.map.tbo = t1;
                 if(this.tbo == null)
                     this.tbo = t1;
@@ -89,7 +89,7 @@ export default class backRender{
         }
         if(material.normalMap){
             if(!material.normalMap.tbo){
-                let t2 = Compiler.tbo(gl,material.normalMap.img);
+                let t2 = Compiler.tbo(gl,material.normalMap.url);
                 material.normalMap.tbo = t2;
             }
 
@@ -137,8 +137,10 @@ export default class backRender{
     }
     renderModel(camera,shadowMaps){
         let gl = this.gl;
-        gl.clearColor(1,0,0,1);
+        gl.clearColor(0,0,0,1);
         gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.enable(gl.DEPTH_TEST);
+        gl.clear(gl.DEPTH_BUFFER_BIT);
         gl.enable(gl.CULL_FACE);
         gl.viewport(0,0,this.width,this.height);
         this.models.forEach(mesh => {
@@ -167,7 +169,7 @@ export default class backRender{
                     let eye = d.camera;
                     let shadow = d.fbo;
 
-                    // console.log(eye.viewMatrix)
+                    // console.log(eye.projectionMatrix)
     
                     Compiler.u_mat4(gl,program,`shadowProjectionMatrix`,eye.projectionMatrix);
                     Compiler.u_mat4(gl,program,`shadowViewMatrix`,eye.viewMatrix);
@@ -212,8 +214,10 @@ export default class backRender{
         let gl = this.gl;
         let program = this.shadowProgram;
         
-        gl.clearColor(0,1,1,1);
+        gl.clearColor(0,0,0,1);
         gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.enable(gl.DEPTH_TEST);
+        gl.clear(gl.DEPTH_BUFFER_BIT)
         // gl.cullFace(gl.FRONT);
         for(let i=0;i<this.lights.length;++i){
             let camera = this.lights[i].shadowCamera;
@@ -221,7 +225,9 @@ export default class backRender{
                 continue;
             let width = this.lights[i].shadowWidth;
             let height = this.lights[i].shadowHeight;
+            
             gl.viewport(0,0,width,height);
+
             camera.position = this.lights[i].position;
             camera.lookAt = this.lights[i].target;
             
@@ -269,7 +275,6 @@ export default class backRender{
         gl.clearColor(...this.clearColor,this.clearAlpha);
         gl.enable(gl.DEPTH_TEST);
         gl.clear(gl.COLOR_BUFFER_BIT);
-
         this.shadowModel = []
         this.models.forEach(d => {
             if(d.material.useShadow)

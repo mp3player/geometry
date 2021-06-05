@@ -17,8 +17,8 @@ class DLight extends Light{
         this.type = 'DLight';
         this.target = target;
         this.shadowCamera = new OrthoCamera();
-        this.shadowWidth = 1024;
-        this.shadowHeight = 1024;
+        this.shadowWidth = 512;
+        this.shadowHeight = 512;
     }
 }
 class ALight extends Light {

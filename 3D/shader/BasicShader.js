@@ -9,6 +9,7 @@ const VertexShader = `#include<version>
 #START_VERTEX_DEFINE
 
 #include<matrix>
+#include<shadow_uniform>
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec2 uv;
@@ -66,35 +67,50 @@ void main(){
         normal = normalMatrix *(tbn * (2.0f * texture(normalMap,oUv).xyz - vec3(1.0f)));
     #endif
 
+    vec3 lightColor[4]; 
+
     #ifdef USE_LIGHT
         vec3 aColor = aLightMixtureDiff(fColor,aLight);
         vec3 dColor = dLightMixtureDiff(fColor,normal,dLight);
         vec3 sColor = sLightMixtureDiff(fColor,normal,sLight);
         vec3 pColor = pLightMixtureDiff(fColor,normal,pLight);
 
-        fColor = aColor + dColor + sColor + pColor;
+        // fColor = aColor + dColor + sColor + pColor;
+        lightColor[0] = aColor;
+        lightColor[1] = dColor;
+        lightColor[2] = sColor;
+        lightColor[3] = pColor;
+
     #endif
 
     #ifdef USE_SHADOW_MAP
         //将顶点变换到阴影空间
         vec4 position = shadowProjectionMatrix * shadowViewMatrix * modelMatrix * vec4(oPosition,1.0f);;
         //将齐次坐标转换为普通坐标
-        vec3 coord = position.xyz * 1.0f / position.w;
+        vec3 coord = position.xyz / position.w;
         //变换顶点到uv空间
-        vec2 uv = coord.xy * .5 + vec2(.5f);
+        vec2 uv = coord.xy * 0.5f + vec2(0.5f);
         //计算深度
-        float depth = texture(shadowMap,uv).r;
+        float depth = texture(shadowMap,uv).r + .005;
         float currentDepth = position.z / position.w;
         //和当前深度比较
-        if(depth > currentDepth){
-            FragColor = vec4(vec3(0.0f),1.0f);
+        vec3 shadowColor;
+        if(depth < currentDepth){
+            shadowColor = vec3(0.0f);
         }else{
-            FragColor = vec4(fColor,1.0f);
+            shadowColor = vec3(1.0f);
         }
-        // FragColor = vec4(vec3(1.0f) - texture(shadowMap,oUv).rgb,1.0f);
+        FragColor = vec4(lightColor[0] + shadowColor * (lightColor[1] + lightColor[2] + lightColor[3]) ,1.0f) ;
+        // FragColor = vec4(vec3(depth ),1.0f);
+        // FragColor = texture(shadowMap,oUv);
     #else 
-        FragColor = vec4(fColor,1.0f);
+        FragColor = vec4(lightColor[0] + lightColor[1] + lightColor[2] + lightColor[3],1.0f);
     #endif
+    
+   
+
+    
+    
 
 }
 `
