@@ -1,5 +1,5 @@
 import {VertexShader,FragmentShader} from './BasicShader.js'
-import {VERSION,PRECISION,MATRIX,LIGHT,LIGHT_COLOR_MIXTURE,SHADOW_UNIFORM} from './ShaderLib.js'
+import {VERSION,PRECISION,MATRIX,LIGHT,LIGHT_COLOR_MIXTURE,SHADOW_UNIFORM,SHADOW_MIXTURE,BLUR,MATH} from './ShaderLib.js'
 
 function preCompileShaderCode(shader){
     while((/(#include<([\w]+)>)/).test(shader)){

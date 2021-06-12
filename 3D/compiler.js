@@ -189,6 +189,83 @@ function fbo(gl = new WebGL2RenderingContext,width,height){
     return framebuffer
 }
 
+function depth_color_fbo(gl,width,height){
+    let framebuffer = gl.createFramebuffer();
+
+    // 新建纹理对象作为帧缓冲区的颜色缓冲区对象
+    let tbo = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tbo);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, width, height, 0, gl.RGB, gl.UNSIGNED_BYTE, null);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+    // 新建渲染缓冲区对象作为帧缓冲区的深度缓冲区对象
+    var depthBuffer = gl.createRenderbuffer();
+    gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer);
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height);
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tbo, 0);
+    
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
+
+    // 检测帧缓冲区对象的配置状态是否成功
+    var e = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+    if (gl.FRAMEBUFFER_COMPLETE !== e) {
+        console.log('Frame buffer object is incomplete: ' + e.toString());
+        return;
+    }
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+
+    framebuffer.texture = tbo
+    framebuffer.width = width;
+    framebuffer.height = height;
+
+    return framebuffer
+}
+
+function depth_fbo(gl=new WebGL2RenderingContext,width,height){
+    let framebuffer = gl.createFramebuffer();
+
+    // 新建纹理对象作为帧缓冲区的颜色缓冲区对象
+    let tbo = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tbo);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, width, height, 0, gl.RGB, gl.UNSIGNED_BYTE, null);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+    // 新建渲染缓冲区对象作为帧缓冲区的深度缓冲区对象
+    var depthBuffer = gl.createRenderbuffer();
+    gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer);
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height);
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+    
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tbo, 0);
+    
+    // 检测帧缓冲区对象的配置状态是否成功
+    var e = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+    if (gl.FRAMEBUFFER_COMPLETE !== e) {
+        console.log('Frame buffer object is incomplete: ' + e.toString());
+        return;
+    }
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+
+    framebuffer.texture = tbo
+
+    return framebuffer
+}
+
 function i_index(gl=new WebGL2RenderingContext,data){
     const buff = ebo(gl,data);
     return buff;
@@ -244,6 +321,8 @@ Compiler.ebo = ebo;
 Compiler.tbo = tbo;
 Compiler.tboa = tboa;
 Compiler.fbo = fbo;
+Compiler.depth_color_fbo = depth_color_fbo;
+Compiler.depth_fbo = depth_fbo;
 
 export default Compiler;
 

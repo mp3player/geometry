@@ -20,7 +20,6 @@ export default class OrthoCamera extends Camera{
         this.viewMatrix = mat4.create();
         mat4.ortho(this.projectionMatrix,this.left,this.right,this.bottom,this.top,this.near,this.far);
         mat4.lookAt(this.viewMatrix,this.position,this.lookAt,this.up);
-        // console.log(this.position,this.lookAt)
     }
 }
 

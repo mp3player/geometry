@@ -82,7 +82,64 @@ uniform sampler2D shadowMap;
 `
 
 const SHADOW_MIXTURE = `
+#ifdef USE_SHADOW_MAP
+    //将顶点变换到阴影空间
+    vec4 position = shadowProjectionMatrix * shadowViewMatrix * modelMatrix * vec4(oPosition,1.0f);;
+    //将齐次坐标转换为普通坐标
+    vec3 coord = position.xyz / position.w;
+    //变换顶点到uv空间
+    vec2 uv = coord.xy * 0.5f + vec2(0.5f);
+    //计算深度
+    float depth = texture(shadowMap,uv).r + .005;
+    float currentDepth = position.z / position.w;
+    //和当前深度比较
+    vec3 shadowColor;
+    if(depth < currentDepth){
+        shadowColor = vec3(0.2f);
+    }else{
+        shadowColor = vec3(1.0f);
+    }
+    FragColor = vec4(aColor + shadowColor * fColor,1.0f);
+#else 
+    FragColor = vec4(aColor + fColor,1.0f);
+#endif
 
 `
 
-export {VERSION,PRECISION,MATRIX,LIGHT,LIGHT_COLOR_MIXTURE,SHADOW_MIXTURE,SHADOW_UNIFORM}
+const BLUR = `
+#include<math>
+    vec3 vBlur(vec2 uv,float height,float step){
+        float off = 1.0f / height;
+        vec3 color = texture(map,uv).rgb;
+
+        for(float i = 1.0f ; i < step ; i += 1.0f){
+            // float weight = gaussian(i);
+            color += texture(map,uv + vec2(0.0f,off * i)).rgb;
+            color += texture(map,uv - vec2(0.0f,off * i)).rgb;
+        }
+        return color / (2.0f * step + 1.0f);
+    }
+    vec3 hBlur(vec2 uv,float width,float step){
+        float off = 1.0f / width;
+        vec3 color = texture(map,uv).rgb * gaussian(0.0f);
+
+        for(float i = 1.0f ; i < step ; i += 1.0f){
+            float weight = gaussian(i);
+            color += texture(map,uv + vec2(off * i,0.0f)).rgb;
+            color += texture(map,uv - vec2(off * i,0.0f)).rgb;
+        }
+        return color / (2.0f * step + 1.0f);
+    }
+
+`
+
+const MATH = `
+    //标准正太分布取值
+    #define PI 3.1415926
+    float gaussian(float x){
+        //1.0f / sqrt(2 * PI) * exp(- pow(x,2.0f) / 2);
+        return 1.0f / sqrt(2.0f * PI) * exp(- pow(x,2.0f) / 2.0f);
+    }
+`
+
+export {VERSION,PRECISION,MATRIX,LIGHT,LIGHT_COLOR_MIXTURE,SHADOW_MIXTURE,SHADOW_UNIFORM,BLUR,MATH}

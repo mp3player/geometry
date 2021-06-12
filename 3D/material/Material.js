@@ -8,6 +8,19 @@ export default class Material {
         this.useLight = opt.useLight != undefined ? opt.useLight : true;
         this.useShadow = opt.useShadow != undefined ? opt.useShadow : false;
         this.receiveShadow = opt.receiveShadow != undefined ? opt.receiveShadow : false;
+        this.program = null;
+        this.needUpdate = true;
     }
 }
 
+export class BufferMaterial {
+    constructor(){
+        this.map = null;
+    }
+}
+
+export class BlurMaterial {
+    constructor(){
+        
+    }
+}
