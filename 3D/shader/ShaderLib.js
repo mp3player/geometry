@@ -81,31 +81,6 @@ uniform sampler2D shadowMap;
 
 `
 
-const SHADOW_MIXTURE = `
-#ifdef USE_SHADOW_MAP
-    //将顶点变换到阴影空间
-    vec4 position = shadowProjectionMatrix * shadowViewMatrix * modelMatrix * vec4(oPosition,1.0f);;
-    //将齐次坐标转换为普通坐标
-    vec3 coord = position.xyz / position.w;
-    //变换顶点到uv空间
-    vec2 uv = coord.xy * 0.5f + vec2(0.5f);
-    //计算深度
-    float depth = texture(shadowMap,uv).r + .005;
-    float currentDepth = position.z / position.w;
-    //和当前深度比较
-    vec3 shadowColor;
-    if(depth < currentDepth){
-        shadowColor = vec3(0.2f);
-    }else{
-        shadowColor = vec3(1.0f);
-    }
-    FragColor = vec4(aColor + shadowColor * fColor,1.0f);
-#else 
-    FragColor = vec4(aColor + fColor,1.0f);
-#endif
-
-`
-
 const BLUR = `
 #include<math>
     vec3 vBlur(vec2 uv,float height,float step){
@@ -142,4 +117,4 @@ const MATH = `
     }
 `
 
-export {VERSION,PRECISION,MATRIX,LIGHT,LIGHT_COLOR_MIXTURE,SHADOW_MIXTURE,SHADOW_UNIFORM,BLUR,MATH}
+export {VERSION,PRECISION,MATRIX,LIGHT,LIGHT_COLOR_MIXTURE,SHADOW_UNIFORM,BLUR,MATH}

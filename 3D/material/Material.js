@@ -10,17 +10,18 @@ export default class Material {
         this.receiveShadow = opt.receiveShadow != undefined ? opt.receiveShadow : false;
         this.program = null;
         this.needUpdate = true;
-    }
-}
 
-export class BufferMaterial {
-    constructor(){
-        this.map = null;
-    }
-}
-
-export class BlurMaterial {
-    constructor(){
-        
+        this.uniforms = {
+            color : { value : this.color , type : 'vec3' },
+            map : { value : this.map , type : 'texture' },
+            normalMap : { value : this.normalMap , type : 'texture' },
+        }
+        this.defines = {
+            useMap : { value : this.map ? true : false },
+            useNormalMap : { value : this.normalMap ? true : false },
+            useLight : { value : this.useLight },
+            useShadow : { value : this.useShadow },
+            useShadowMap : { value : this.receiveShadow }
+        }
     }
 }

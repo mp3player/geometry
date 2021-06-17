@@ -62,131 +62,23 @@
         import {Join} from './constant/Constant.js'
 
         import {dft,idft,eulor} from './fourier/dft.js'
-        //3D
-        import BackRender from './3D/backRender.js'
-        import PerspectiveCamera from './3D/camera/PerspectiveCamera.js'
-        import OrthoCamera from './3D/camera/OrthoCamera.js'
-        import ObjLoader from './3D/loader/loader.js'
-
-        import Geometry from './3D/material/Mesh.js'
-        import Material from './3D/material/Material.js'
-        import Texture from './3D/texture/Texture.js'
-
-        import {ALight,DLight,PLight,SLight} from './3D/light/Light.js'
-
-        import PostProcess from './3D/postProcess/PostProcess.js'
-        import VBlur from './3D/postProcess/VBlur.js'
-        import HBlur from './3D/postProcess/HBlur.js'
-        import Bloom from './3D/postProcess/Bloom.js'
-
         
+        let painter = new Painter(canvas);
 
-        let loader = new ObjLoader();
-        let br = new BackRender(512,512,canvas);
-        let camera = new PerspectiveCamera(45,1,.1,10000);
-        camera.position = [10,10,10]
-        camera.up = [0,1,0]
+        let grid = new Grid(10,10);
+        painter.add(grid);
 
-        camera.control(document);
+        let axes = new Axes(Color.RED,Color.GREEN);
+        painter.add(axes);
 
-        let mesh = null;
-
-        let material = new Material({
-            useShadow:true,
-            useLight:true,
-            receiveShadow:true,
-            map:new Texture("./floor.jpg"),
-            normalMap:new Texture('./floor-normal.jpg')
-        })
-
-        let pMaterial = new Material ({
-            color:[1,1,1],
-            useShadow:true,
-            useLight:false,
-            map:new Texture("./floor.jpg"),
-            normalMap:new Texture('./floor-normal.jpg'),
-            receiveShadow:true
+        let circle = new Circle(0,0,10,{
+            background:Color.RED
         });
-    
-        loader.load('./3D/model/rect.obj',(d) => {
-            mesh = d;
-            br.addModel(d);
-            d.translateY(2);
-            d.material = material;
-            d.name = 'cube';
-        })
-        loader.load('./3D/model/monkey.obj',(d) => {
-           
-            br.addModel(d);
-            d.translateX(3);
-            d.translateY(3);
-            d.translateZ(2);
-            console.log(d)
-            d.material = new Material({
-                color:[1,1,0],
-                useLight:true,
-                useShadow:true
-            });
-            d.name = 'monkey';
-        })
-        
-        loader.load('./3D/model/plane.obj',(d) => {
-            br.addModel(d);
-            d.material = pMaterial;
-            d.rotateX(Math.PI / 2);
-            d.name = 'plane';
-        })
 
-        loader.load('./3D/model/sphere.obj',(d) => {
-            console.log(d)
-            br.addModel(d);
-            // d.material = pMaterial;
-            d.translateX(-2);
-            d.translateY(1);
-            d.translateZ(2);
-            d.material.useShadow = true;
-            d.name = 'plane';
-        })
+        painter.add(circle)
 
-        
-        let aLight = new ALight([1,1,1],1);
-        let dLight = new DLight([1,1,1],1,[0,0,0]);
-        let sLight = new SLight([1,1,1],10.0);
+        painter.loopRender();
 
-        br.addLight(aLight);
-        br.addLight(dLight);
-        br.addLight(sLight);
-
-        sLight.position = [10,10,10];
-        dLight.position = [50,50,50];
-
-        dLight.shadowCamera = new OrthoCamera(-5,5,-2,4,.1,100);
-        window.c = dLight
-        camera.control(document);
-
-        let postProcess = new PostProcess();
-        let vBlur = new VBlur(250,250);
-        let hBlur = new HBlur(250,250);
-
-        let bloom = new Bloom();
-
-        
-        br.addPostProcess(vBlur);
-        br.addPostProcess(hBlur);
-        br.addPostProcess(bloom);
-        br.addPostProcess(postProcess);
-
-        let i = 0;
-        let a = () => {
-            br.render(camera);
-            if(mesh){
-                mesh.rotateX(.01);
-                mesh.rotateY(.01);
-            }
-            // if(++i < 100)
-            requestAnimationFrame(a);
-        }
-        a();
     </script>
 </body>
 </html>

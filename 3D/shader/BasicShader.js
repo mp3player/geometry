@@ -1,12 +1,12 @@
 import Material from "../material/Material.js"
-import {VERSION,PRECISION,MATRIX,LIGHT,LIGHT_COLOR_MIXTURE,SHADOW_UNIFORM,SHADOW_MIXTURE} from './ShaderLib.js'
+import {VERSION,PRECISION,MATRIX,LIGHT,LIGHT_COLOR_MIXTURE,SHADOW_UNIFORM} from './ShaderLib.js'
 
 
 const VertexShader = `#include<version>
 #include<precision>
 
 //用于定义define变量
-#START_VERTEX_DEFINE
+//START_VERTEX_DEFINE
 
 #include<matrix>
 #include<shadow_uniform>
@@ -35,7 +35,7 @@ void main(){
 const FragmentShader = `#include<version>
 #include<precision>
 
-#START_FRAGMENT_DEFINE
+//START_FRAGMENT_DEFINE
 
 #include<light> 
 #include<matrix>
@@ -79,12 +79,28 @@ void main(){
 
     #endif
 
-    #include<shadow_mixture>
-   
-    // FragColor = vec4(vec3(1.0f,0.0f,0.0f),1.0f);
-    
-    
+    vec3 shadowColor = vec3(1.0f);
 
+    #ifdef USE_SHADOW_MAP
+        //将顶点变换到阴影空间
+        vec4 position = shadowProjectionMatrix * shadowViewMatrix * modelMatrix * vec4(oPosition,1.0f);;
+        //将齐次坐标转换为普通坐标
+        vec3 coord = position.xyz / position.w;
+        //变换顶点到uv空间
+        vec2 uv = coord.xy * 0.5f + vec2(0.5f);
+        //计算深度
+        float depth = texture(shadowMap,uv).r + .005;
+        float currentDepth = position.z / position.w;
+        //和当前深度比较
+        if(depth < currentDepth){
+            shadowColor = vec3(0.2f);
+        }else{
+            shadowColor = vec3(1.0f);
+        }
+
+    #endif
+
+    FragColor = vec4(aColor + shadowColor * fColor,1.0f);
 }
 `
 const BufferVertexShader = `#include<version>
@@ -103,7 +119,6 @@ void main(){
     oPosition = position;
 }
 `
-
 const BufferFragmentShader = `#include<version>
 #include<precision>
 
@@ -134,6 +149,9 @@ void main(){
 `
 const VBlurFragmentShader = `#include<version>
 #include<precision>
+
+//用于定义define变量
+//START_VERTEX_DEFINE
 
 uniform sampler2D map;
 uniform float width;
@@ -166,6 +184,9 @@ void main(){
 const HBlurFragmentShader = `#include<version>
 #include<precision>
 
+//用于定义define变量
+//START_VERTEX_DEFINE
+
 uniform sampler2D map;
 uniform float width;
 uniform float height;
@@ -193,7 +214,6 @@ void main(){
 }
 
 `
-
 const BloomFragmentShader = `#include<version>
 #include<precision>
 

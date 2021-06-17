@@ -1,6 +1,6 @@
 import Compiler from "../compiler.js";
 import { BufferFragmentShader, BufferVertexShader } from "../shader/BasicShader.js";
-import { preCompileShaderCode } from "../shader/ShaderHandler.js";
+import { getShaderCode, preCompileShaderCode } from "../shader/ShaderHandler.js";
 
 let position = [-1,-1,1,-1,1,1,-1,-1,1,1,-1,1];
 let uv = [0,0,1,0,1,1,0,0,1,1,0,1];
@@ -12,10 +12,37 @@ export default class PostProcess{
         this.program = null;
         this.width = width;
         this.height = height;
+
+        this.uniforms = {
+            width : { value : this.width , type : 'float' },
+            height : { value : this.height , type : 'float' }
+        }
+        this.defines = {
+
+        }
+        
+        this.shaderCode = {
+            vertex : BufferVertexShader,
+            fragment : BufferFragmentShader 
+        };
+
+        this.postProcess = [];
+
+        //the texture count of the process
+        this.passCount = 1;
     }
     init(gl=new WebGL2RenderingContext){
         this.postData(gl);
         this.compileProgram(gl);
+    }
+    getFbo(gl){
+        return Compiler.depth_color_fbo(gl,this.width,this.height); 
+    }
+    applyFbos(fbos){
+
+    }
+    addPostProcess(){
+
     }
     postData(gl){
         let vao = gl.createVertexArray();
@@ -26,25 +53,8 @@ export default class PostProcess{
         gl.bindVertexArray(null);
     }
     compileProgram(gl){
-        this.program = Compiler.compileProgram(gl,preCompileShaderCode(BufferVertexShader),preCompileShaderCode(BufferFragmentShader));
-    }
-    render(){
-        //render to the postProcess
-        if(!this.program)
-            this.init(gl);
-        gl.viewport(0,0,width,height);
-        gl.clear(gl.COLOR_BUFFER_BIT);
-        gl.clear(gl.DEPTH_BUFFER_BIT);
-        gl.enable(gl.DEPTH_TEST);
-        gl.useProgram(this.program);
-        gl.bindVertexArray(this.vertexArrayBuffer);
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D,finalFrameBuffer.texture);
-        Compiler.u_integer(gl,this.program,'map',0)
-        gl.drawArrays(gl.TRIANGLES,0,6);
-
-        gl.deleteTexture(finalFrameBuffer.texture);
-        gl.deleteFramebuffer(finalFrameBuffer);
+        let code = getShaderCode(this);
+        this.program = Compiler.compileProgram(gl,...code);
     }
 
     

@@ -20,12 +20,14 @@ export default class backRender{
         this.background = [];
         this.postProcess = [];
         this.init();
+
     }
     init(){
         this.canvas.width = this.width;
         this.canvas.height = this.height;  
         this.gl = this.canvas.getContext('webgl2',{antialias:false});
         this.shadowProgram = Compiler.compileProgram(this.gl,preCompileShaderCode(ShadowVertexShader),preCompileShaderCode(ShadowFragmentShader));
+        window.gl = this.gl;
     }
     addModel(model){
         this.models.push(model);
@@ -51,9 +53,11 @@ export default class backRender{
         material.program = program;
         material.needUpdate = false;
 
+        // console.log(...code);
+
         return program;
     }
-    poseVertexData(mesh){
+    postVertexData(mesh){
         let gl = this.gl;
         //vao
         let vao = gl.createVertexArray();
@@ -68,6 +72,44 @@ export default class backRender{
         mesh.vertexArrayBuffer = vao;
 
         return vao;
+    }
+    postUniformData(material){
+        let uniforms = material.uniforms;
+        let gl = this.gl;
+        let program = material.program;
+        let textureIndex = 0;
+        for(let i in uniforms){
+            let value = material[i];
+            let type = uniforms[i].type ;
+            if(value == null)
+                continue;
+            switch(type){
+                case 'vec4':{
+                    Compiler.u_vec4(gl,program,i,value);
+                }break;
+                case 'vec3':{
+                    Compiler.u_vec3(gl,program,i,value);
+                }break;
+                case 'vec2':{
+                    Compiler.u_vec2(gl,program,i,value);
+                }break;
+                case 'int':{
+                    Compiler.u_integer(gl,program,i,value);
+                }break;
+                case 'float':{
+                    Compiler.u_float(gl,program,i,value);
+                }break;
+                case 'texture':{
+                    if(value.tbo == null){
+                        let tbo = Compiler.tbo(gl,value.url);
+                        value.tbo = tbo;
+                    }
+                    gl.activeTexture(gl.TEXTURE0 + textureIndex);
+                    gl.bindTexture(gl.TEXTURE_2D,value.tbo);
+                    Compiler.u_integer(gl,program,i,textureIndex++);
+                }break;
+            }
+        }
     }
     renderLight(program){
         let gl = this.gl;
@@ -103,18 +145,17 @@ export default class backRender{
     }
     createTexture(material,program){
         let gl = this.gl;
+        let index = 0;
         // gl.useProgram(program);
         if(material.map){
             if(!material.map.tbo){
                 let t1 = Compiler.tbo(gl,material.map.url);
                 material.map.tbo = t1;
-                if(this.tbo == null)
-                    this.tbo = t1;
             }
-            gl.activeTexture(gl.TEXTURE0);
+            gl.activeTexture(gl.TEXTURE0 + index);
             gl.bindTexture(gl.TEXTURE_2D,material.map.tbo);
             
-            Compiler.u_integer(gl,program,'map',0);
+            Compiler.u_integer(gl,program,'map',index++);
         }
         if(material.normalMap){
             if(!material.normalMap.tbo){
@@ -122,18 +163,11 @@ export default class backRender{
                 material.normalMap.tbo = t2;
             }
 
-            gl.activeTexture(gl.TEXTURE1);
+            gl.activeTexture(gl.TEXTURE0 + index);
             gl.bindTexture(gl.TEXTURE_2D,material.normalMap.tbo);
             
-            Compiler.u_integer(gl,program,'normalMap',1);
+            Compiler.u_integer(gl,program,'normalMap',index++);
         }
-    }
-    disposeTexture(tbos){
-        let gl = this.gl;
-        gl.bindTexture(gl.TEXTURE_2D,null);
-        tbos.forEach(d => {
-            gl.deleteTexture(d);
-        })
     }
     createBuffer(mesh){
 
@@ -141,65 +175,7 @@ export default class backRender{
     disposeBuffer(){
         
     }
-    renderModel(camera,shadowMaps){
-        let gl = this.gl;
-        gl.clearColor(0,0,0,1);
-        gl.clear(gl.COLOR_BUFFER_BIT);
-        gl.enable(gl.DEPTH_TEST);
-        gl.clear(gl.DEPTH_BUFFER_BIT)
-        gl.viewport(0,0,this.width,this.height);
-        this.models.forEach(mesh => {
-            let program ;
-            if(mesh.material.needUpdate)
-                program = this.getProgram(mesh);
-            else
-                program = mesh.material.program;    
-            mesh.update();
-            //use program
-            gl.useProgram(program);
-
-            if(mesh.material.useLight)
-                this.renderLight(program);
-
-            //matrix
-            Compiler.u_mat4(gl,program,'projectionMatrix',camera.projectionMatrix);
-            Compiler.u_mat4(gl,program,'viewMatrix',camera.viewMatrix);
-            Compiler.u_mat4(gl,program,'modelMatrix',mesh.modelMatrix);
-            Compiler.u_mat3(gl,program,'normalMatrix',mesh.normalMatrix);
-            Compiler.u_vec3(gl,program,'cameraPosition',camera.position);
-
-            //material
-            this.createTexture(mesh.material,program);
-            Compiler.u_vec3(gl,program,'color',[1,1,1])
-            if(mesh.material.receiveShadow){
-                Compiler.u_float(gl,program,"shadowCount",shadowMaps.length);
-                shadowMaps.forEach((d,i) => {
-                    let eye = d.camera;
-                    let shadow = d.fbo;
-
-                    // console.log(eye.projectionMatrix)
-    
-                    Compiler.u_mat4(gl,program,`shadowProjectionMatrix`,eye.projectionMatrix);
-                    Compiler.u_mat4(gl,program,`shadowViewMatrix`,eye.viewMatrix);
-                    if(this.tbo){
-                        gl.activeTexture(gl.TEXTURE10);
-                        gl.bindTexture(gl.TEXTURE_2D,shadow.texture);
-                        Compiler.u_integer(gl,program,`shadowMap`,10);
-                    }
-                })
-            }
-            //vao 
-            if(mesh.needUpdate)
-                this.poseVertexData(mesh);
-            gl.bindVertexArray(mesh.vertexArrayBuffer);
-            //draw
-            gl.drawArrays(gl.TRIANGLES,0,mesh.geometry.position.length / 3);
-            //dispose vbo
-            gl.bindVertexArray(null);
-            gl.bindTexture(gl.TEXTURE_2D,null);
-        })
-    }
-    renderShadowModel(){
+    generateShadowModel(){
         let framebuffers = [];
         let gl = this.gl;
         let program = this.shadowProgram;
@@ -254,12 +230,70 @@ export default class backRender{
         // gl.cullFace(gl.BACK);
         return framebuffers;
     }
-    disposeProgram(program){
-        this.gl.deleteProgram(program);
+    poseShadowMap(mesh,shadowMaps){
+        let gl = this.gl;
+        let program = mesh.material.program;
+        if(mesh.material.receiveShadow){
+            Compiler.u_float(gl,program,"shadowCount",shadowMaps.length);
+            shadowMaps.forEach((d,i) => {
+                let eye = d.camera;
+                let shadow = d.fbo;
+
+                Compiler.u_mat4(gl,program,`shadowProjectionMatrix`,eye.projectionMatrix);
+                Compiler.u_mat4(gl,program,`shadowViewMatrix`,eye.viewMatrix);
+                
+                gl.activeTexture(gl.TEXTURE10);
+                gl.bindTexture(gl.TEXTURE_2D,shadow.texture);
+                Compiler.u_integer(gl,program,`shadowMap`,10);
+            
+            })
+        }
+    }
+    renderModel(camera,shadowMaps){
+        let gl = this.gl;
+        gl.clearColor(0,0,0,1);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.enable(gl.DEPTH_TEST);
+        gl.clear(gl.DEPTH_BUFFER_BIT)
+        gl.viewport(0,0,this.width,this.height);
+        this.models.forEach(mesh => {
+            let program ;
+            if(mesh.material.needUpdate)
+                program = this.getProgram(mesh);
+            else
+                program = mesh.material.program;    
+            mesh.update();
+
+            //use program
+            gl.useProgram(program);
+
+            if(mesh.material.useLight)
+                this.renderLight(program);
+
+            //matrix
+            Compiler.u_mat4(gl,program,'projectionMatrix',camera.projectionMatrix);
+            Compiler.u_mat4(gl,program,'viewMatrix',camera.viewMatrix);
+            Compiler.u_mat4(gl,program,'modelMatrix',mesh.modelMatrix);
+            Compiler.u_mat3(gl,program,'normalMatrix',mesh.normalMatrix);
+            Compiler.u_vec3(gl,program,'cameraPosition',camera.position);
+
+            //material
+            this.postUniformData(mesh.material);
+            this.poseShadowMap(mesh,shadowMaps);
+            
+            //vao 
+            if(mesh.needUpdate)
+                this.postVertexData(mesh);
+            gl.bindVertexArray(mesh.vertexArrayBuffer);
+            //draw
+            gl.drawArrays(gl.TRIANGLES,0,mesh.geometry.position.length / 3);
+            //dispose vbo
+            gl.bindVertexArray(null);
+            gl.bindTexture(gl.TEXTURE_2D,null);
+        })
     }
     render(camera){
         let gl = this.gl; 
-        
         
         this.shadowModel = []
         this.models.forEach(d => {
@@ -269,30 +303,27 @@ export default class backRender{
         camera.update();
 
         //generate the shadow map
-        let fbos = this.renderShadowModel();
-        gl.bindFramebuffer(gl.FRAMEBUFFER,null);
-
+        let fbos = this.generateShadowModel();
         //generate the map of the scene
-        let screenFrame = Compiler.depth_color_fbo(gl,this.width,this.height);
+        let screenFrame = Compiler.hdr_fbo(gl,this.width,this.height);
         gl.bindFramebuffer(gl.FRAMEBUFFER,screenFrame);
         this.renderModel(camera,fbos);
+        //dispose the framebuffer to release the memory of the graph card to avoid the cash of the browser
         fbos.forEach(d => {
             let fbo = d.fbo;
-            gl.deleteTexture(fbo.texture);
-            gl.deleteFramebuffer(fbo);
+            Compiler.disposeFboAndTexture(gl,fbo);
         })
-
         //  apply the post process
         this.applyPostProcess(screenFrame);
 
-        //dispose all of the framebuffer
-        gl.deleteTexture(screenFrame.texture);
-        gl.deleteFramebuffer(screenFrame);
+        //dispose the original framebuffer
+        Compiler.disposeFboAndTexture(gl,screenFrame);
     }
     applyPostProcess(fbo){
         let post = this.postProcess;
         let gl = this.gl;
         let f;
+        let originFbo = fbo;
         gl.bindFramebuffer(gl.FRAMEBUFFER,null);
         for(let i = 0 ; i < post.length; ++i){
             let process = post[i];
@@ -304,25 +335,27 @@ export default class backRender{
             gl.viewport(0,0,process.width,process.height);
             gl.useProgram(process.program);
             gl.bindVertexArray(process.vertexArrayBuffer);
-            gl.activeTexture(gl.TEXTURE0 + i);
+            //post the last fbo
+            gl.activeTexture(gl.TEXTURE0 + i * 2);
             gl.bindTexture(gl.TEXTURE_2D,fbo.texture);
-            Compiler.u_integer(gl,process.program,'map',i);
+            Compiler.u_integer(gl,process.program,'map',i * 2);
+            //post the original fbo
+            gl.activeTexture(gl.TEXTURE0 + i * 2 + 1);
+            gl.bindTexture(gl.TEXTURE_2D,originFbo.texture);
+            Compiler.u_integer(gl,process.program,'map',i * 2 + 1);
             //image size
-            Compiler.u_float(gl,process.program,'width',fbo.width);
-            Compiler.u_float(gl,process.program,'height',fbo.height);
+            this.postUniformData(process);
             gl.drawArrays(gl.TRIANGLES,0,6);
             
             if(fbo){
                 gl.bindFramebuffer(gl.FRAMEBUFFER,null);
-                gl.deleteTexture(fbo.texture);
-                gl.deleteFramebuffer(fbo);
+                Compiler.disposeFboAndTexture(gl,fbo);
             }
             fbo = f;
         }
         if(f){
             gl.bindFramebuffer(gl.FRAMEBUFFER,null);
-            gl.deleteTexture(f.texture);
-            gl.deleteFramebuffer(f);
+            Compiler.disposeFboAndTexture(gl,fbo);
         }
     }
 }
