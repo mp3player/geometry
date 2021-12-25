@@ -1,174 +1,145 @@
-export default class Mat2{
-    constructor(){
-        this.mat = new Float32Array(1,0,0,1);
-        this.coefficient = 2;
-    }
-}
+//一个3 x3 的矩阵，用来计算二维空间中的仿射变换
+//与一个向量做乘法时，需要将向量变换到齐次坐标进行计算
 
-export default class Mat3{
-    constructor(){
-        this.mat = new Float32Array(1,0,0,0,1,0,0,0,1);
-        this.coefficient = 3;
+/**
+ * |a , b , c|
+ * |d , e , f|
+ * |g , h , i|
+ * 
+ */
+import Vector2 from './vector.js'
+
+export default class Matrix{
+    constructor(a = 1 , b = 0 , c = 0 , d = 0 ,e = 1 , f = 0 , g = 0 , h = 0 , i = 1){
+        this.mat = new Float32Array([a,b,c,d,e,f,g,h,i]);
     }
-    setValue(i,j,val){
-        let c = this.coefficient;
-        this.mat[j * c + i] = val;
+    applyRotation(rotation){
+        let cos = Math.cos(rotation);
+        let sin = Math.sin(rotation);
+
+        let rotateMatrix = new Matrix( cos , -sin,0,
+                                    sin , cos , 0);
+        return rotateMatrix.multiply(this);
     }
-    getValue(i,j){
-        let c = this.coefficient;
-        return this.mat[j * c + i];
+    applyTranslation(translation){
+        let translateMatrix = new Matrix();
+        translateMatrix.set(0,2,translation.x);
+        translateMatrix.set(1,2,translation.y);
+        return translateMatrix.multiply(this);
+    }
+    applyScalar(scalar){
+        let scaleMatrix = new Matrix(scalar.x, 0 , 0 ,
+                                     0, scalar.y , 0);
+        return scaleMatrix.multiply(this);
+    }
+    applyTransform(vec){
+        let x = this.get(0,0) * vec.x + this.get(0,1) * vec.y + this.get(0,2);
+        let y = this.get(1,0) * vec.x + this.get(1,1) * vec.y + this.get(1,2);
+        return new Vector2(x,y);
     }
     add(mat){
-        let c = this.coefficient;
-        let mat = new Mat3();
-        for(let i=0;i<c;++i){
-            for(let j=0;j<c;++j){
-                let v0 = this.getValue(i,j);
-                let v1 = mat.getValue(i,j);
-                mat.setValue(i,j,v0 + v1);
-            }
-        }
-        return mat;
-    }
-    sub(mat){
-        let c = this.coefficient;
-        let mat = new Mat3();
-        for(let i=0;i<c;++i){
-            for(let j=0;j<c;++j){
-                let v0 = this.getValue(i,j);
-                let v1 = mat.getValue(i,j);
-                mat.setValue(i,j,v0 - v1);
-            }
-        }
-        return mat;
-    }
-    mul(mat){
-        let mat = new Mat3();
-        let t00 = this.mat[0]   ,   m00 = mat.data[0];
-        let t01 = this.mat[1]   ,   m10 = mat.data[3];
-        let t02 = this.mat[2]   ,   m20 = mat.data[6];
-
-        let t10 = this.mat[3]   ,   m01 = mat.data[1];
-        let t11 = this.mat[4]   ,   m11 = mat.data[4];
-        let t12 = this.mat[5]   ,   m21 = mat.data[7];
+        let a = this.get(0,0) + mat.get(0,0);
+        let b = this.get(0,1) + mat.get(0,1);
+        let c = this.get(0,2) + mat.get(0,2);
         
-        let t20 = this.mat[6]   ,   m02 = mat.data[2];
-        let t21 = this.mat[7]   ,   m12 = mat.data[5];
-        let t22 = this.mat[8]   ,   m22 = mat.data[8];
-    
-        let v00 = t00 * m00 + t01 * m10 + t02 * m20;
-        let v01 = t00 * m01 + t01 * m11 + t02 * m21;
-        let v02 = t00 * m02 + t01 * m12 + t02 * m22;
+        let d = this.get(1,0) + mat.get(1,0);
+        let e = this.get(1,1) + mat.get(1,1);
+        let f = this.get(1,2) + mat.get(1,2);
+        
+        let g = this.get(2,0) + mat.get(2,0);
+        let h = this.get(2,1) + mat.get(2,1);
+        let i = this.get(2,2) + mat.get(2,2);
 
-        let v10 = t10 * m00 + t11 * m10+ t12 * m20
-        let v11 = t10 * m01 + t11 * m11+ t12 * m21
-        let v12 = t10 * m02 + t11 * m12+ t12 * m22;
-
-        let v20 = t20 * m00 + t21 * m10 + t22 * m20;
-        let v21 = t20 * m01 + t21 * m11 + t22 * m21;
-        let v22 = t20 * m02 + t21 * m12 + t22 * m22;
-         
-         mat.data = new Float32Array(v00,v01,v02,v10,v11,v12,v20,v21,v22);
-
-         return mat;
-         
-
+        return new Matrix(a,b,c,d,e,f,g,h,i);
     }
-    det(){
-        let a = this.data;
-        let a00 = a[0],
-            a01 = a[1],
-            a02 = a[2];
-        let a10 = a[3],
-            a11 = a[4],
-            a12 = a[5];
-        let a20 = a[6],
-            a21 = a[7],
-            a22 = a[8];
-        return a00 * (a22 * a11 - a12 * a21) + a01 * (-a22 * a10 + a12 * a20) + a02 * (a21 * a10 - a11 * a20);
+    multiply(mat){
+        let a = this.get(0,0) * mat.get(0,0) + this.get(0,1) * mat.get(1,0) + this.get(0,2) * mat.get(2,0);
+        let b = this.get(0,0) * mat.get(0,1) + this.get(0,1) * mat.get(1,1) + this.get(0,2) * mat.get(2,1);
+        let c = this.get(0,0) * mat.get(0,2) + this.get(0,1) * mat.get(1,2) + this.get(0,2) * mat.get(2,2);
+
+        let d = this.get(1,0) * mat.get(0,0) + this.get(1,1) * mat.get(1,0) + this.get(1,2) * mat.get(2,0);
+        let e = this.get(1,0) * mat.get(0,1) + this.get(1,1) * mat.get(1,1) + this.get(1,2) * mat.get(2,1);
+        let f = this.get(1,0) * mat.get(0,2) + this.get(1,1) * mat.get(1,2) + this.get(1,2) * mat.get(2,2);
+
+        let g = this.get(2,0) * mat.get(0,0) + this.get(2,1) * mat.get(1,0) + this.get(2,2) * mat.get(2,0);
+        let h = this.get(2,0) * mat.get(0,1) + this.get(2,1) * mat.get(1,1) + this.get(2,2) * mat.get(2,1);
+        let i = this.get(2,0) * mat.get(0,2) + this.get(2,1) * mat.get(1,2) + this.get(2,2) * mat.get(2,2);
+
+        return new Matrix(a,b,c,d,e,f,g,h,i);
+    }
+    scale(s){
+        let a = this.get(0,0) * s;
+        let b = this.get(0,1) * s;
+        let c = this.get(0,2) * s;
+
+        let d = this.get(1,0) * s;
+        let e = this.get(1,1) * s;
+        let f = this.get(1,2) * s;
+
+        let g = this.get(2,0) * s;
+        let h = this.get(2,1) * s;
+        let i = this.get(2,2) * s;
+
+        return new Matrix(a,b,c,d,e,f,g,h,i);
+    }
+    transpose(){
+        let a = this.get(0,0);
+        let b = this.get(0,1);
+        let c = this.get(0,2);
+
+        let d = this.get(1,0);
+        let e = this.get(1,1);
+        let f = this.get(1,2);
+
+        let g = this.get(2,0);
+        let h = this.get(2,1);
+        let i = this.get(2,2);
+
+        return new Matrix(a,d,g,b,e,h,c,f,i);
+
     }
     invert(){
-        let a = this.data;
-        var a00 = a[0],
-            a01 = a[1],
-            a02 = a[2];
-        var a10 = a[3],
-            a11 = a[4],
-            a12 = a[5];
-        var a20 = a[6],
-            a21 = a[7],
-            a22 = a[8];
-        var b01 = a22 * a11 - a12 * a21;
-        var b11 = -a22 * a10 + a12 * a20;
-        var b21 = a21 * a10 - a11 * a20; // Calculate the determinant
-
-        var det = a00 * b01 + a01 * b11 + a02 * b21;
-
-        if (!det) {
-            return null;
-        }
-
-        det = 1.0 / det;
-        out[0] = b01 * det;
-        out[1] = (-a22 * a01 + a02 * a21) * det;
-        out[2] = (a12 * a01 - a02 * a11) * det;
-        out[3] = b11 * det;
-        out[4] = (a22 * a00 - a02 * a20) * det;
-        out[5] = (-a12 * a00 + a02 * a10) * det;
-        out[6] = b21 * det;
-        out[7] = (-a21 * a00 + a01 * a20) * det;
-        out[8] = (a11 * a00 - a01 * a10) * det;
-        let mat = new Mat3();
-        mat.data = out;
-        return mat;
-    }
-    translate(vec){
-        
-    }
-    rotate(){
 
     }
-    scale(){
-
+    copy(){
+        let ele = this.mat.toString().split(',');
+        return Matrix.fromArray(ele);
     }
-}
-
-export default class Mat4{
-    constructor(){
-        this.data = new Float32Array(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
-        this.coefficient = 4;
+    set(i,j,val){
+        this.mat[i * 3 + j] = val;
     }
-    det(){
-        let a = this.data;
-        let a00 = a[0],
-            a01 = a[1],
-            a02 = a[2],
-            a03 = a[3];
-        let a10 = a[4],
-            a11 = a[5],
-            a12 = a[6],
-            a13 = a[7];
-        let a20 = a[8],
-            a21 = a[9],
-            a22 = a[10],
-            a23 = a[11];
-        let a30 = a[12],
-            a31 = a[13],
-            a32 = a[14],
-            a33 = a[15];
-        let b00 = a00 * a11 - a01 * a10;
-        let b01 = a00 * a12 - a02 * a10;
-        let b02 = a00 * a13 - a03 * a10;
-        let b03 = a01 * a12 - a02 * a11;
-        let b04 = a01 * a13 - a03 * a11;
-        let b05 = a02 * a13 - a03 * a12;
-        let b06 = a20 * a31 - a21 * a30;
-        let b07 = a20 * a32 - a22 * a30;
-        let b08 = a20 * a33 - a23 * a30;
-        let b09 = a21 * a32 - a22 * a31;
-        let b10 = a21 * a33 - a23 * a31;
-        let b11 = a22 * a33 - a23 * a32; // Calculate the determinant
+    get(i,j){
+        return this.mat[i * 3 + j];
+    }
+
+    getRotation(){
+        return new Matrix(  this.get(0,0) , this.get(0,1),0,
+                            this.get(1,0) , this.get(1,1) ,0);
+    }
+    static lookAt(vec){
+        if(vec.length() <= 0)
+            return new Matrix();
+
+        let com = vec.toComplex();
+        return com.arg();
+    }
+    static fromArray(arr){
+        return new Matrix(...arr);
+    } 
+    static ApplyRotation(vec , rotation){
+        let rotateMatrix = new Matrix();
+        rotateMatrix = rotateMatrix.applyRotation(rotation);
+        return rotateMatrix.multiply(vec);
+    }
+    static ApplyTranslation(vec , translation){
+        let translateeMatrix = new Matrix();
+        translateMatrix = translateeMatrix.applyTranslation(translation);
+        return translateMatrix.multiply(vec);
+    }
+    static ApplyScalar(vec , scalar){
+        let scalarMatrix = new Matrix();
+        scalarMatrix = scalarMatrix.applyScalar(scalar);
+        return scalarMatrix.multiply(vec);
+    }
     
-        return b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;
-      }
 }

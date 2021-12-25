@@ -29,11 +29,34 @@ export default class Complex{
     reverse(){
         return new Complex(-this.r , -this.i);
     }
-    adjoint(){
+    conj(){
         return new Complex(this.r , -this.i);
     }
     div(c){
-        return this.mul(c.adjoint()).scale(1 / c.length());
+        return this.mul(c.conj()).scale(1 / c.length());
+    }
+    arg(){
+        let com = this.normalize();
+        // console.log(com)
+        let x = com.r , y = com.i;
+        if(x == 0 && y > 0){
+            return Math.PI / 2;
+        }else if(x == 0 && y < 0){
+            return -Math.PI / 2;
+        }else{
+            let tan = y / x ;
+            let a = Math.atan(tan);
+            if      (x < 0 && y < 0){
+                return a - Math.PI;
+            }else if(x < 0 && y > 0){
+                return a + Math.PI;
+            }else if(x > 0 && y > 0){
+                return a;
+            }else {
+                return a;
+            }
+        }
+        
     }
     toVector(){
         return new Vector(this.r,this.i);

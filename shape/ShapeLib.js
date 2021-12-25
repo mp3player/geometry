@@ -1,5 +1,5 @@
-import Complex from "./complex.js";
-import Vector from "./vector.js";
+import Complex from "../math/complex.js";
+import Vector from "../math/vector.js";
 
 export default class ShapeLib {
     static fivePointStar(radius=1){

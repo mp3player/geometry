@@ -10,75 +10,87 @@
         canvas{
             position:absolute;
         }
-        .tools {
-            position:absolute;top:0;left:0;width:100%;height:60px;background:red;
-        }
-        .tools ul {
-            display:flex;list-style:none;
-        }
-        .tools ul li {
-            min-width:50px;
-        }
     </style>
 </head>
 <body>
     <canvas id="canvas"></canvas>
-    <!-- <div class="tools">
-        <ul>
-            <li>pen</li>
-            <li>eraser</li>
-        </ul>
-    </div> -->
     <script type="module">
-        // import Express from './collection/express.js'
-        import Stack from './collection/stack.js'
 
-        import Painter from './shape/container/painter.js'
-        import Circle from './shape/polygon/circle.js'
-        import Polygon from './shape/polygon/polygon.js'
-        import Ring from './shape/ring/ring.js'
-        import Rectange from './shape/polygon/rectangle.js'
-        import Line from './shape/path/line.js'
+        import Painter from './shape/Painter.js'
+        import Circle from './shape/polygon/Circle.js'
+        import Polygon from './shape/polygon/Polygon.js'
+        import Line from './shape/path/Line.js'
+        import ShapeLib from './shape/ShapeLib.js'
+
+        import Shape from './shape/Shape.js'
+
         import Vector from './math/vector.js'
-        import Complex from './math/complex.js'
-        import Calc from './math/calc.js'
-        import ShapeLib from './math/shapeLib.js'
+        import Matrix from './math/matrix.js'
 
-        import Axes from './util/component/axes.js'
-        import Grid from './util/component/grid.js'
+        import {StrokeStyle , FillStyle} from './util/style.js'
 
-        import PerlinNoise from './math/noise/PerlinNoise.js'
-
-        import ImageMap,{Color} from './shape/image/image.js'
-
-        import LinearExpression from './shape/polynomial/linear-expression.js'
-        import SquareExpression from './shape/polynomial/square-expression.js'
-        import PolynomialExpression from './shape/polynomial/polynomial-expression.js'
-
-        import {bubbleSort} from './math/sort.js'
-        import Convex from './math/convex.js'
-        import Cursor from './util/component/cursor.js'
-        import Scale from './util/component/scale.js'
-        import {Join} from './constant/Constant.js'
-
-        import {dft,idft,eulor} from './fourier/dft.js'
-        
         let painter = new Painter(canvas);
 
-        let grid = new Grid(10,10);
-        painter.add(grid);
+        let line = new Line([
+            new Vector(-500,500) , 
+            new Vector(300,-167) ,
+            new Vector(-300,-167) 
+        ]);
+        let polygon = new Polygon([
+            new Vector(-100,200) , 
+            new Vector(100,100) , 
+            new Vector(100,-100),
+            new Vector(-100,-100)
+        ]);
 
-        let axes = new Axes(Color.RED,Color.GREEN);
-        painter.add(axes);
+        let polygon1 = new Polygon([
+            new Vector(-100,100) , 
+            new Vector(100,100) , 
+            new Vector(100,-100),
+            new Vector(-100,-100)
+        ])
 
-        let circle = new Circle(0,0,10,{
-            background:Color.RED
+        painter.add(line)
+
+        let arrow = new Polygon(ShapeLib.arrow(10));
+        painter.add(arrow)
+        
+        let shape = new Shape()
+        shape.add(polygon1);
+
+        painter.add(shape)
+
+        let strokeStyle = new FillStyle({
+            background:'#ff0000',
+            borderWidth:1,
+            borderColor:'#ffff00'
         });
 
-        painter.add(circle)
+        let circle = new Circle(100,0,100,strokeStyle);
+        painter.add(circle);
 
-        painter.loopRender();
+        let v = new Vector();
 
+        document.onmousemove = (e) => {
+            let p= new Vector(e.x,e.y);
+            // console.log(p);
+
+            let p1 = new Vector( p.x - painter.canvas.width / 2 , -p.y + painter.canvas.height / 2);
+            let angle = Matrix.lookAt(p1);
+            arrow.setRotation(angle - Math.PI / 2);
+            v = p1.normalize().scale(10);
+        } 
+
+        let a = () => {
+            painter.mask('rgb(255,255,255)');
+            painter.render();
+
+            // painter.scale(1.001,1.001)
+
+            requestAnimationFrame(a);
+        }
+        a();
+        
     </script>
 </body>
 </html>

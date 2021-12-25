@@ -13,13 +13,41 @@ import {Color} from '../shape/image/image.js'
  * 
  * 
  */
-export default class Style {
-    constructor(opt={}){
-        this.background = opt.background;
-        // this.color = opt.color;
-        this.borderColor = opt.borderColor ? opt.borderColor : Color.BLACK;
-        this.borderRadius = opt.borderRadius || 0;
-        this.borderWidth = opt.borderWidth || 1;
-        this.join = opt.join || Join.MITER;
+class Style {
+    constructor(){
+        this.Type = Style.COMMON;
+    }
+    static      COMMON      =   'commonStyle';
+    static      STROKE      =   'strokeStyle';
+    static      FILL        =   'fillStyle';
+    static      TEXT        =   'textStyle';
+
+}
+
+class StrokeStyle extends Style{
+    constructor(props={}){
+        super();
+        this.Type = Style.STROKE;
+        this.borderColor = props.borderColor ? props.borderColor : Color.BLACK;
+        this.borderWidth = props.borderWidth || 1;
+        this.join = props.join || Join.MITER;
     }
 }
+
+class FillStyle extends StrokeStyle{
+    constructor(props){
+        super(props);
+        this.Type = Style.FILL;
+        this.background = props.background ? props.background : Color.TRANSPARENT;
+        this.borderRadius = props.borderRadius || 0;
+    }
+}
+
+class TextStyle extends Style{
+    constructor(){
+        super();
+        this.Type = Style.TEXT;
+    }
+}
+
+export {Style,StrokeStyle,FillStyle,TextStyle}

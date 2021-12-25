@@ -85,7 +85,6 @@ export default class Convex {
 
 
 //the animation of the process for the convex 
-  
 export function convex(painter,arr){
     function cross(v1,v2){
         return v1.x * v2.y - v2.x * v1.y;

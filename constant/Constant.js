@@ -17,14 +17,8 @@ const ShapeType = {
     CIRCLE      :   'circle',
     CURVE       :   'curve',
     RING        :   'ring',
-    BEZIERCURVE :   'bezierCurve',
     RECTANGLE   :   'rectangle',
-    FUNCTION    :   'fn',
-
-    HELPER      :   'helper',
-    CURSOR      :   'cursor',
-    SCALE       :   'scale',
-    IMAGEMAP    :   'image'
 }
+
 
 export {Join,Polynomial,ShapeType}
