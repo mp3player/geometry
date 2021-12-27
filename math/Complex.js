@@ -1,4 +1,4 @@
-import Vector from "./vector.js";
+import Vector from "./Vector.js";
 
 export default class Complex{
     constructor(r=0,i=0){

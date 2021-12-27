@@ -1,7 +1,6 @@
-import Vector from "../math/vector.js";
-import { ShapeType } from "../constant/Constant.js";
-import Matrix from '../math/matrix.js'
-import { StrokeStyle } from "../util/style.js";
+import Vector from "../math/Vector.js";
+import Matrix from '../math/Matrix.js'
+import { StrokeStyle } from "../util/Style.js";
 
 /**
  * type     :       shape type
@@ -18,7 +17,7 @@ export default class Shape{
     constructor(style = new StrokeStyle()){
         this.style = style;
         this.Name = 'shape';
-        this.Type = ShapeType.SHAPE;
+        this.Type = Shape.SHAPE;
         this.position = new Vector(0,0);
         this.scalar = new Vector(1,1);
         this.rotation = 0;
@@ -66,4 +65,13 @@ export default class Shape{
     applyTransform(transform){
         
     }
+
+
+    static    SHAPE       =   'shape';
+    static    LINE        =   'line';
+    static    POLYGON     =   'polygon';
+    static    CIRCLE      =   'circle';
+    static    CURVE       =   'curve';
+    static    RING        =   'ring';
+    static    RECTANGLE   =   'rectangle';
 }

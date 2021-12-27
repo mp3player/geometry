@@ -1,4 +1,4 @@
-import Complex from "./complex.js";
+import Complex from "./Complex.js";
 
 export default class Vector {
     constructor(x,y){
@@ -16,7 +16,6 @@ export default class Vector {
         return this.x == vec.x && this.y == vec.y;
     }
     add(vec){
-        // console.log('vec',vec)
         return new Vector(this.x + vec.x , this.y + vec.y);
     }
     sub(vec){

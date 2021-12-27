@@ -1,11 +1,10 @@
-import Vector from "../../math/vector.js";
-import { ShapeType } from "../../constant/Constant.js";
+import Vector from "../../math/Vector.js";
 import Shape from "../Shape.js";
 export default class Circle extends Shape{
     constructor(x=0,y=0,r=1,style){
         super(style);
         this.Name = 'circle';
-        this.Type = ShapeType.CIRCLE;
+        this.Type = Shape.CIRCLE;
         this.center = new Vector(x,y);
         this.radius = r;
     }

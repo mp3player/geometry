@@ -1,4 +1,3 @@
-import { Join } from "../constant/Constant.js";
 import {Color} from '../shape/image/image.js'
 
 /**
@@ -21,16 +20,23 @@ class Style {
     static      STROKE      =   'strokeStyle';
     static      FILL        =   'fillStyle';
     static      TEXT        =   'textStyle';
-
+    static Join = {
+        MITER       :   'miter',
+        ROUND       :   'round',
+        BEVEL       :   'bevel'
+    };
+    
+    
 }
 
 class StrokeStyle extends Style{
     constructor(props={}){
         super();
+        console.log(props.borderColor)
         this.Type = Style.STROKE;
         this.borderColor = props.borderColor ? props.borderColor : Color.BLACK;
         this.borderWidth = props.borderWidth || 1;
-        this.join = props.join || Join.MITER;
+        this.join = props.join || Style.Join.MITER;
     }
 }
 

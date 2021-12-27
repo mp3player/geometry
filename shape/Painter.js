@@ -1,7 +1,5 @@
-import { ShapeType } from "../constant/Constant.js";
-import Matrix from "../math/matrix.js";
-import Vector from "../math/vector.js";
-import { Style } from "../util/style.js";
+import Vector from "../math/Vector.js";
+import { Style } from "../util/Style.js";
 import Shape from "./Shape.js";
 
 export default class Painter extends Shape {
@@ -17,15 +15,9 @@ export default class Painter extends Shape {
         this.position = new Vector(canvas.width / 2, canvas.height / 2);
 
     }
-    scale(sx=0,sy=0){
-        this.scalar = this.scalar.mul(new Vector(sx,sy));
-
-    }
-    add(shape){
-        this.children.push(shape)
-    }
     render(){
         this.updateMatrix();
+        this.children.sort((a,b) => a.index - b.index );
         for(let i = 0 ; i < this.children.length ; ++i){
             this.drawShapes(this.transform,this.children[i]);
         }
@@ -82,6 +74,7 @@ export default class Painter extends Shape {
         this.drawShape(transform,shape);
         transform = shape.getWorldMatrix(transform);
         for(let i = 0 ; i < shape.children.length ; ++ i){
+            shape.children.sort( (a,b) => a.index - b.index );
             this.drawShapes(transform,shape.children[i]);
         }
     }
@@ -110,28 +103,22 @@ export default class Painter extends Shape {
     drawShape(transform,shape){
         transform = shape.getWorldMatrix(transform);
         switch(shape.Type){
-            case ShapeType.LINE:{
+            case Shape.LINE:{
                 this.drawLine(transform,shape);
             }break;
-            case ShapeType.POLYGON:{
+            case Shape.POLYGON:{
                 this.drawPolygon(transform,shape);
             }break;
-            case ShapeType.CIRCLE:{
+            case Shape.CIRCLE:{
                 this.drawCircle(transform,shape);
             }break;
-            case ShapeType.Shape:{
+            case Shape.Shape:{
                 //the shape container
             }break;
         }
     }
-    mask(color = 'rgba(255,255,255,255)'){
-        let pen = this.pen;
-        pen.save();
-        pen.beginPath();
-        pen.fillStyle = color;
-        pen.fillRect(0,0,this.canvas.width,this.canvas.height);
-        pen.fill();
-        pen.closePath();
-        pen.restore();
+
+    compare(shape1,shape2){
+        return shape1.index < shape2.index;
     }
 }

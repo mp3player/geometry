@@ -7,7 +7,7 @@
  * |g , h , i|
  * 
  */
-import Vector2 from './vector.js'
+import Vector2 from './Vector.js'
 
 export default class Matrix{
     constructor(a = 1 , b = 0 , c = 0 , d = 0 ,e = 1 , f = 0 , g = 0 , h = 0 , i = 1){

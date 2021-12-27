@@ -1,4 +1,4 @@
-import Vector from "../vector.js";
+import Vector from "../Vector.js";
 
 export default class PerlinNoise {
     static noise(x,y = 0){
@@ -50,12 +50,8 @@ export default class PerlinNoise {
             Math.sin(random)
         );
     }
-    //平滑函数
     static smooth3(x){
         return 3 * Math.pow(x,2) - 2 * Math.pow(x,3);
-    }
-    static smooth4(x){
-        return 4 * Math.pow(x,3) - 3 * Math.pow(x,4);
     }
     static interplote(x0,x1,w){
         return (x1 - x0) * w + x0;

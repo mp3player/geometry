@@ -1,10 +1,9 @@
-import { ShapeType } from "../../constant/Constant.js";
 import Shape from "../Shape.js";
 
 export default class line extends Shape {
-    constructor(vertex){
-        super();
-        this.Type = ShapeType.LINE;
+    constructor(vertex,props){
+        super(props);
+        this.Type = Shape.LINE;
         this.Name = 'line';
         this.vertex = vertex;
     }

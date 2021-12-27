@@ -1,4 +1,3 @@
-import { ShapeType } from "../../constant/Constant.js";
 import Shape from "../Shape.js";
 
 export default class Polygon extends Shape {
@@ -6,7 +5,7 @@ export default class Polygon extends Shape {
         super(style);
         this.Name = 'polygon';
         this.vertex = vertex;
-        this.Type = ShapeType.POLYGON;
+        this.Type = Shape.POLYGON;
     }
     applyTransform(transform){
         //计算顶点坐标

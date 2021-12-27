@@ -24,10 +24,10 @@
 
         import Shape from './shape/Shape.js'
 
-        import Vector from './math/vector.js'
-        import Matrix from './math/matrix.js'
+        import Vector from './math/Vector.js'
+        import Matrix from './math/Matrix.js'
 
-        import {StrokeStyle , FillStyle} from './util/style.js'
+        import {StrokeStyle , FillStyle} from './util/Style.js'
 
         let painter = new Painter(canvas);
 
@@ -52,8 +52,9 @@
 
         painter.add(line)
 
-        let arrow = new Polygon(ShapeLib.arrow(10));
-        painter.add(arrow)
+        let arrow = new Polygon(ShapeLib.Arrow(40),new FillStyle({background:'#f0f0f0'}));
+        painter.add(arrow);
+        arrow.index = 100;
         
         let shape = new Shape()
         shape.add(polygon1);
@@ -62,8 +63,8 @@
 
         let strokeStyle = new FillStyle({
             background:'#ff0000',
-            borderWidth:1,
-            borderColor:'#ffff00'
+            borderColor:'#ffffff',
+            borderWidth:10
         });
 
         let circle = new Circle(100,0,100,strokeStyle);
@@ -73,19 +74,29 @@
 
         document.onmousemove = (e) => {
             let p= new Vector(e.x,e.y);
-            // console.log(p);
-
             let p1 = new Vector( p.x - painter.canvas.width / 2 , -p.y + painter.canvas.height / 2);
             let angle = Matrix.lookAt(p1);
             arrow.setRotation(angle - Math.PI / 2);
             v = p1.normalize().scale(10);
         } 
 
+        line.index = 100;
+
+        let curv = ShapeLib.BezierCurve([
+            new Vector(-200,0),
+            new Vector(200,200)
+        ]);
+
+        console.log(curv)
+
+
+        let curve = new Line(curv,new StrokeStyle({borderColor:'#ff0000'}));
+        painter.add(curve)
+
         let a = () => {
-            painter.mask('rgb(255,255,255)');
             painter.render();
 
-            // painter.scale(1.001,1.001)
+            // arrow.translate(v.x,v.y)
 
             requestAnimationFrame(a);
         }
