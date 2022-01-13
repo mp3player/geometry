@@ -37,6 +37,9 @@ export default class Vector {
     length(){
         return Math.hypot(this.x,this.y);
     }
+    squaLength(){
+        return this.x * this.x + this.y * this.y;
+    }
     reverse(){
         return new Vector(-this.x,-this.y);
     }

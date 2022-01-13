@@ -52,9 +52,10 @@ export default class Painter extends Shape {
             let v = vertex[i];
             pen.lineTo(v.x,v.y);
         }
+        pen.closePath();
         pen.stroke();
         pen.fill();
-        pen.closePath();
+        
         pen.restore();
     }
     drawCircle(transform,circle){
@@ -117,7 +118,6 @@ export default class Painter extends Shape {
             }break;
         }
     }
-
     compare(shape1,shape2){
         return shape1.index < shape2.index;
     }

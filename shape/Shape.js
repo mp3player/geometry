@@ -25,27 +25,35 @@ export default class Shape{
         this.transform = new Matrix();
         this.children = [];
     }
+
     add(shape){
         this.children.push(shape);
     }
+
     translate(x=0,y=0){
         this.position = this.position.add(new Vector(x,y));
     }
+
     setPosition(vec){
         this.position = vec;
     }
+
     rotate(r=0){
         this.rotation += r;
     }
+
     setRotation(r){
         this.rotation = r;
     }
+
     scale(sx=0,sy=0){
         this.scalar = this.scalar.mul(new Vector(sx,sy));
     }
+
     setScalar(vec){
         this.scalar = vec;
     }
+
     updateMatrix(){
         //计算图形矩阵矩阵
         let mat = new Matrix();
@@ -57,11 +65,13 @@ export default class Shape{
 
         this.transform = mat;
     }
+
     getWorldMatrix(transform){
         //计算世界坐标系下的图形矩阵
         this.updateMatrix();
         return transform.multiply(this.transform);
     }
+    
     applyTransform(transform){
         
     }

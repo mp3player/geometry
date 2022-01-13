@@ -32,7 +32,6 @@ class Style {
 class StrokeStyle extends Style{
     constructor(props={}){
         super();
-        console.log(props.borderColor)
         this.Type = Style.STROKE;
         this.borderColor = props.borderColor ? props.borderColor : Color.BLACK;
         this.borderWidth = props.borderWidth || 1;

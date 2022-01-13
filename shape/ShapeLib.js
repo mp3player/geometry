@@ -5,6 +5,7 @@ export default class ShapeLib {
     static FivePointStar(radius=1){
         return ShapeLib.pointStar(5,radius)
     }
+
     static SixPointStar(radius=1){
         return ShapeLib.pointStar(6,radius)
     }
@@ -14,7 +15,7 @@ export default class ShapeLib {
         if(count < 3)
             return ;
         count *= 2;
-        let base = new Complex(0,radius);
+        let base = new Complex(radius , 0);
         let angle = Math.PI * 2 / count;
         let rotate = new Complex(Math.cos(angle),Math.sin(angle));
         let scale = 1;
@@ -32,10 +33,10 @@ export default class ShapeLib {
 
     static Arrow(size = 1){
         return [
-            new Vector(0,2 * size),
-            new Vector(-size,0),
-            new Vector(0,.5 * size),
-            new Vector(size,0),
+            new Vector(2 * size , 0),     
+            new Vector(0 , -size),
+            new Vector(.5 * size , 0),
+            new Vector(0 , size),
         ]
     }
 
@@ -46,7 +47,7 @@ export default class ShapeLib {
             
             return v.scale(fac).add(v0);
         }
-        //递归获取每一次的顶点数目
+
         let getKeyVertex = (vert,fac) => {
             let len = vert.length;
             if(len <= 1)
@@ -61,9 +62,8 @@ export default class ShapeLib {
 
             return getKeyVertex(vs,fac);
         }
-        //
-        let getVertex = () => {
-            let length = args.length;
+        
+        let getVertex = (args) => {
             let vert = []
             for(let i = 0 ; i < 1 ; i += .05){
                 let v = getKeyVertex(args,i);
@@ -72,6 +72,6 @@ export default class ShapeLib {
             return vert;
         }
 
-        return getVertex();
+        return getVertex(args);
     }
 }
