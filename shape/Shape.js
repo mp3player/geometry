@@ -1,6 +1,7 @@
 import Vector from "../math/Vector.js";
 import Matrix from '../math/Matrix.js'
 import { StrokeStyle } from "../util/Style.js";
+import { EventListener } from "../util/EventListener.js";
 
 /**
  * type     :       shape type
@@ -13,8 +14,9 @@ import { StrokeStyle } from "../util/Style.js";
  * children :       the child shape of this shape
  */
 
-export default class Shape{
+export default class Shape extends EventListener{
     constructor(style = new StrokeStyle()){
+        super();
         this.style = style;
         this.Name = 'shape';
         this.Type = Shape.SHAPE;
@@ -24,10 +26,16 @@ export default class Shape{
         this.index = 0;
         this.transform = new Matrix();
         this.children = [];
-    }
+        this.parent = null;
+    }   
 
     add(shape){
+        shape.parent = this;
         this.children.push(shape);
+    }
+    //remove the shape coresponding the id
+    remove(id){
+
     }
 
     translate(x=0,y=0){
@@ -74,6 +82,14 @@ export default class Shape{
     
     applyTransform(transform){
         
+    }
+
+    trigger(eventName , e){
+        super.trigger(eventName,e);
+        if(this.post){
+            e.target = this.parent;
+            this.parent.trigger(eventName,e);
+        }
     }
 
 

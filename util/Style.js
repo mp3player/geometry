@@ -12,6 +12,7 @@ import {Color} from '../shape/image/image.js'
  * 
  * 
  */
+
 class Style {
     constructor(){
         this.Type = Style.COMMON;

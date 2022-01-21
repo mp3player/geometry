@@ -2,14 +2,17 @@ import Complex from "../math/Complex.js";
 import Vector from "../math/Vector.js";
 
 export default class ShapeLib {
+    //五角星
     static FivePointStar(radius=1){
         return ShapeLib.pointStar(5,radius)
     }
 
+    //六角星
     static SixPointStar(radius=1){
         return ShapeLib.pointStar(6,radius)
     }
 
+    //n角星
     static PointStar(count=3,radius=1){
         count = Number.parseInt(count);
         if(count < 3)
@@ -31,6 +34,7 @@ export default class ShapeLib {
         return points;
     }
 
+    //箭头
     static Arrow(size = 1){
         return [
             new Vector(2 * size , 0),     
@@ -40,6 +44,7 @@ export default class ShapeLib {
         ]
     }
 
+    //bezier曲线
     static BezierCurve(args){
         //find the interval point between v1 and v2 according to the given factor
         let getInterval = (v0,v1,fac) => {
@@ -73,5 +78,17 @@ export default class ShapeLib {
         }
 
         return getVertex(args);
+    }
+
+    //样条曲线
+    //矩形
+
+    static Rect(w,h){
+        return [
+            new Vector(0,0),
+            new Vector(0,h),
+            new Vector(w,h),
+            new Vector(w,0)
+        ];
     }
 }

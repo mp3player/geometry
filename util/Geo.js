@@ -1,5 +1,5 @@
 
-function isInBoxRect(vect , rect){
+function isInBox(vect , rect){
     
 }
 
@@ -33,7 +33,7 @@ function isInCircle(vert , circle){
      * 
      */
     let dis = vert.sub(circle.center);
-    let squaLen = dis.squaLen();
+    let squaLen = dis.squaLength();
     let squaR = circle.r * circle.r;
     return (squaLen <= squaR)
 }
@@ -44,9 +44,6 @@ function isInPath(vert , path){
      * poly = Array:Vector
      * 
      */
-
-
-
 }
 
 const Geometry = {

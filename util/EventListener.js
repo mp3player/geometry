@@ -1,42 +1,30 @@
 class Event {
     constructor(){
         this.target = null;
-        this.path = null;
+        this.path = [];
+        this.MOUSE_PRESS = false;
     }
-
-    static MOUSE_PLAIN      =       'plain';
-    static MOUSE_PRESS      =       'press';
-    static MOUSE_MOVE       =       'move';
-    static MOUSE_RELEASE    =       'realse';
-    static MOUSE_SCROLL     =       'scroll';
-    
 }
 
 class MouseActionEvent extends Event{
     constructor(){
         super();
+        this.path = [];
     }
 }
 
 class MouseMonitorEvent extends Event{
     constructor(){
         super();
-        this.Type = Event.MOUSE_MOVE;
     }
 }
 
-class MouseScrollEvent extends Event{
-    constructor(){
-        super();
-        this.Type = Event.MOUSE_SCROLL;
-    }
-}
 
 class EventListener {
     constructor(){
         this.events = {};
+        this.post = false;          //whether post the signal to the parent;
     }
-
     on(eventName , handler){
         this.events[eventName] = handler;
     }
@@ -44,7 +32,7 @@ class EventListener {
     off(eventName , handler){
         delete this.events[eventName];
     }
-
+    
     trigger(eventName , e){
         if(this.events[eventName]){
             this.events[eventName](e);
@@ -52,4 +40,4 @@ class EventListener {
     }
 }
 
-export {EventListener,Event,MouseActionEvent,MouseMonitorEvent,MouseScrollEvent}
+export {EventListener,Event,MouseActionEvent,MouseMonitorEvent}
