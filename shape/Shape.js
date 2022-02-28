@@ -2,6 +2,8 @@ import Vector from "../math/Vector.js";
 import Matrix from '../math/Matrix.js'
 import { StrokeStyle } from "../util/Style.js";
 import { EventListener } from "../util/EventListener.js";
+import Painter from "./Painter.js";
+import { DataType } from "../util/Type.js";
 
 /**
  * type     :       shape type
@@ -20,7 +22,7 @@ export default class Shape extends EventListener{
         this.style = style;
         this.Name = 'shape';
         this.Type = Shape.SHAPE;
-        this.position = new Vector(0,0);
+        this.translation = new Vector(0,0);
         this.scalar = new Vector(1,1);
         this.rotation = 0;
         this.index = 0;
@@ -68,7 +70,7 @@ export default class Shape extends EventListener{
 
         mat = mat.applyScalar(this.scalar);
         mat = mat.applyRotation(this.rotation);
-        mat = mat.applyTranslation(this.position);
+        mat = mat.applyTranslation(this.translation);
         // console.log(this.scalar)
 
         this.transform = mat;
@@ -86,18 +88,19 @@ export default class Shape extends EventListener{
 
     trigger(eventName , e){
         super.trigger(eventName,e);
-        if(this.post){
-            e.target = this.parent;
-            this.parent.trigger(eventName,e);
-        }
+        if(DataType.isInstance(this.parent , Painter))
+            return ;
+        e.target = this.parent;
+        this.parent.trigger(eventName,e);
     }
 
 
-    static    SHAPE       =   'shape';
-    static    LINE        =   'line';
-    static    POLYGON     =   'polygon';
-    static    CIRCLE      =   'circle';
-    static    CURVE       =   'curve';
-    static    RING        =   'ring';
-    static    RECTANGLE   =   'rectangle';
+    static      SHAPE       =   'shape';
+    static      PATH        =   'path';
+    static      LINE        =   'line';
+    static      POLYGON     =   'polygon';
+    static      CIRCLE      =   'circle';
+    static      CURVE       =   'curve';
+    static      RING        =   'ring';
+    static      RECTANGLE   =   'rectangle';
 }

@@ -22,6 +22,8 @@ export class Color {
 
     static TRANSPARENT  =   'rgba(0,0,0,0)';
 
+    static WHITE        =   'white'
+
 
     constructor(r=0,g=0,b=0,a=1){
         this.r = r;

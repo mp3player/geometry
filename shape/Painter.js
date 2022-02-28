@@ -2,10 +2,10 @@ import Matrix from "../math/Matrix.js";
 import Vector from "../math/Vector.js";
 import { isInCircle, isInPolygon } from "../util/Geo.js";
 import { Style } from "../util/Style.js";
+import { Color } from "./image/image.js";
 import Shape from "./Shape.js";
 
 export default class Painter extends Shape {
-    
     constructor(canvas){
         super();
 
@@ -15,8 +15,9 @@ export default class Painter extends Shape {
         this.pen = this.canvas.getContext('2d');
 
         this.scalar = new Vector(1,-1);
-        this.position = new Vector(canvas.width / 2, canvas.height / 2);
+        this.translation = new Vector(canvas.width / 2, canvas.height / 2);
         this.caches = null;
+        this.background = Color.WHITE;
 
         this.init();
     }
@@ -31,17 +32,22 @@ export default class Painter extends Shape {
         })
 
         this.canvas.addEventListener('mousemove' , (e) =>{
-            // this.checkout('mousemove' ,e)
+            this.checkout('mousemove' ,e)
         })
 
         this.canvas.addEventListener('mouseup' , (e) => {
-            // this.checkout('mouseup' ,e)
+            this.checkout('mouseup' ,e)
         })
 
     }
 
     render(){
         this.caches = this.cache();
+        this.pen.save();
+        this.pen.clearRect(0,0,this.canvas.width,this.canvas.height)
+        this.pen.fillStyle = this.background;
+        this.pen.fillRect(0,0,this.canvas.width , this.canvas.height)
+        this.pen.restore();
         this.drawShape(this.caches)
     }
 
@@ -75,16 +81,14 @@ export default class Painter extends Shape {
     drawLine(transform,line){
         let pen = this.pen;
         let vertex = line.applyTransform(transform);
-        let start = vertex[0];
+        let v0 = vertex[0];
+        let v1 = vertex[1];
 
         pen.save();
         this.setStyle(line);
         pen.beginPath();
-        pen.moveTo(start.x,start.y);
-        for(let i = 0 ; i < vertex.length ; ++i){
-            let v = vertex[i];
-            pen.lineTo(v.x,v.y);
-        }
+        pen.moveTo(v0.x,v0.y);
+        pen.lineTo(v1.x,v1.y);
         pen.stroke();
         pen.closePath()
         pen.restore();
@@ -197,8 +201,7 @@ export default class Painter extends Shape {
                     
                     let circle = {center,r};
                     isTouch = isInCircle(screen,circle);
-                    console.log(isTouch)
-                    //the shape will not be checkout behind the current shape
+
                     if(isTouch){
                         ev.target = shape;
                         shape.trigger(name,ev);
@@ -213,7 +216,6 @@ export default class Painter extends Shape {
                     let verts = shape.applyTransform(transform);
                     isTouch = isInPolygon(screen,verts);
 
-                    //the shape will not be checkout behind the current shape
                     if(isTouch){
                         ev.target = shape;
                         shape.trigger(name,ev);

@@ -1,20 +1,18 @@
 import Shape from "../Shape.js";
+import { Path } from "./Path.js";
 
-export default class line extends Shape {
-    constructor(vertex,props){
+export default class line extends Path {
+    constructor(v0,v1,props){
         super(props);
         this.Type = Shape.LINE;
         this.Name = 'line';
-        this.vertex = vertex;
+        this.start = v0;
+        this.end = v1;
     }
     applyTransform(transform){
         //计算顶点坐标
-        let vert = [];
-        for(let i=0;i<this.vertex.length;++i){
-            let v = this.vertex[i];
-            v = transform.applyTransform(v);
-            vert.push(v);
-        }   
-        return vert;
+        let start = transform.applyTransform(this.start);
+        let end = transform.applyTransform(this.end);            
+        return [start,end];
     }
 }

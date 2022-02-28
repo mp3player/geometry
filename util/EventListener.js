@@ -1,29 +1,7 @@
-class Event {
-    constructor(){
-        this.target = null;
-        this.path = [];
-        this.MOUSE_PRESS = false;
-    }
-}
-
-class MouseActionEvent extends Event{
-    constructor(){
-        super();
-        this.path = [];
-    }
-}
-
-class MouseMonitorEvent extends Event{
-    constructor(){
-        super();
-    }
-}
-
-
 class EventListener {
     constructor(){
         this.events = {};
-        this.post = false;          //whether post the signal to the parent;
+        this.dragable = false;
     }
     on(eventName , handler){
         this.events[eventName] = handler;
@@ -40,4 +18,4 @@ class EventListener {
     }
 }
 
-export {EventListener,Event,MouseActionEvent,MouseMonitorEvent}
+export {EventListener}

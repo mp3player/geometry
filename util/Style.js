@@ -26,7 +26,8 @@ class Style {
         ROUND       :   'round',
         BEVEL       :   'bevel'
     };
-    
+
+    copy(){}
     
 }
 
@@ -37,6 +38,14 @@ class StrokeStyle extends Style{
         this.borderColor = props.borderColor ? props.borderColor : Color.BLACK;
         this.borderWidth = props.borderWidth || 1;
         this.join = props.join || Style.Join.MITER;
+    }
+    //对属性就行拷贝
+    copy(){
+        return new StrokeStyle({
+            borderColor:this.borderColor,
+            borderWidth:this.borderWidth,
+            join:this.join
+        })
     }
 }
 
