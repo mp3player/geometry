@@ -1,9 +1,10 @@
 import Shape from "../Shape.js";
 import { Path } from "./Path.js";
 
+//直线
 export default class line extends Path {
     constructor(v0,v1,props){
-        super(props);
+        super([v0,v1],props);
         this.Type = Shape.LINE;
         this.Name = 'line';
         this.start = v0;

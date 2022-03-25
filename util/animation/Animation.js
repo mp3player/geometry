@@ -1,19 +1,22 @@
-import { _Math } from '../math/Math.js';
+import { _Math } from '../../math/Math.js';
 
-//动画的基类，根据属性值的不断变化形成动画
+/**
+ * 可增加配置，参考css3 animation配置
+ * 
+ */
 class Animation {
     constructor(target , action , name = 'animation-0'){
         this.target = target ;
         this.action = action;
         this.name = name;
     }
-    run(cb = () => {}){
+    run(cb = Animation.defaulCallback){
         let actionName = this.action.props;
         let from = this.action.from ? this.action.from : this.target[actionName];
         let to = this.action.to //? this.action.to : this.target[actionName];
         let duration = this.action.duration ? this.action.duration : 100;
-        let callback = this.action.callback ? (d) =>this.action.callback : (d) => {};
 
+        
 
         let i = 0;
         let timer = setInterval(() =>{
@@ -22,33 +25,40 @@ class Animation {
             this.target[actionName] = props;
             if(i >= duration){
                 clearInterval(timer);
-                callback(this.target)
-                cb(this.target);
             }
         },1)
     }
 
-    static Animate(target , action){
+    static createAction(target , action){
         /**
          * action : {from : status  , to : status , interval : time }
          */
         return new Animation(target , action);
     }
+
+    static defaulCallback(target) {
+        console.log('animation finished');
+    }
 }
-
-
-
 
 //路径动画，只有shape才能使用，考虑使用shape的位置还是偏移进行移动
 class PathAnimation {
-    constructor(shape , path , duration ){
+    constructor(shape , path , duration = 100 ){
         this.shape = shape;
-        this.path = path;
+        this.path = path;               //一个path实例，必须实现路径分割的方法
         this.duration = duration;
     }
-    run(){
-
+    run(cb = Animation.defaulCallback){
+        let i = 0;
+        let timer = setInterval(() =>{
+            i += 1;
+            if(i >= duration){
+                clearInterval(timer);
+                cb(this.target);
+            }
+        },1)
     }
 }
 
-export {}
+
+export {Animation , PathAnimation}

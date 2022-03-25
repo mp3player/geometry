@@ -1,8 +1,10 @@
 import Matrix from "../math/Matrix.js";
 import Vector from "../math/Vector.js";
+import { Event, EventManager, MouseEvent } from "../util/EventListener.js";
 import { isInCircle, isInPolygon } from "../util/Geo.js";
 import { Style } from "../util/Style.js";
 import { Color } from "./image/image.js";
+import line from "./path/Line.js";
 import Shape from "./Shape.js";
 
 export default class Painter extends Shape {
@@ -18,27 +20,150 @@ export default class Painter extends Shape {
         this.translation = new Vector(canvas.width / 2, canvas.height / 2);
         this.caches = null;
         this.background = Color.WHITE;
+        
+        //事件
+        this.eventMgr = null;
 
         this.init();
     }
 
     init(){
-        this.dispatchEvent();
+        this.registEvent();
     }
 
-    dispatchEvent(){
+    registEvent(){
+        // 建立事件队列
+        // 采用事件捕获的方式向下传递事件，这是因为最顶层的canvas才有绑定事件的能力
+        /**
+         * 1、采用事件捕获的方式去实现，并在每一个shape中使用坐标去计算在自己坐标系下的位置，并计算是否应该触发事件
+         * 
+         * # 2、创建事件的时候需要已经确定那个对象是已经被选定为触发对象，并将其作为target传入到事件对象中
+         * 
+         * # 3、drag 事件会屏蔽掉其余的事件
+         */
+        // 响应事件队列
+
         this.canvas.addEventListener('mousedown' , (e) =>{
-            this.checkout('mousedown' ,e);
+            this.eventMgr = new EventManager(e);
         })
 
         this.canvas.addEventListener('mousemove' , (e) =>{
-            this.checkout('mousemove' ,e)
+            this.eventMgr = new EventManager(e);
         })
+
+        // this.canvas.addEventListener('mouseover',e => {
+        //     this.eventMgr = new EventManager(e);
+        // })
+
+        // this.canvas.addEventListener('mouseenter',(e) => {
+        //     this.eventMgr = new EventManager(e);
+        // })
+
+        // this.canvas.addEventListener('mouseleave',(e) => {
+        //     this.eventMgr = new EventManager(e);
+        // })
 
         this.canvas.addEventListener('mouseup' , (e) => {
-            this.checkout('mouseup' ,e)
-        })
+            this.eventMgr = new EventManager(e);
 
+        });
+
+        this.canvas.addEventListener('contextmenu' , e => {
+            // e.preventDefault()
+        })
+    }
+
+    // 事件触发
+    dispatchEvent(){
+        let originEvent = this.eventMgr.getEvent();
+        let shapes = this.caches;
+        let screen = this.eventMgr.getScreen();
+        
+        let queue = [];
+        for(let i = 0 ; i < shapes.length ; ++ i){
+            let shape = shapes[i]['shape'];
+            let trans = shapes[i]['transform'];
+            
+            if(shape.hasChild()) continue;
+            
+            let event = new MouseEvent(originEvent);
+
+            switch(shape.Type){
+                case Shape.CIRCLE:{
+                    let [center,r] = shape.applyTransform(trans);
+                    let circle = {center,r};
+                    let isTouch = isInCircle(screen,circle);
+                    // 事件冒泡
+                    if(isTouch)
+                        queue.push( { shape , event } )
+
+                }break;
+                case Shape.LINE:{
+
+                }break;
+                case Shape.POLYGON:{
+                    let verts = shape.applyTransform(trans);
+                    let isTouch = isInPolygon(screen,verts);
+                    if(isTouch)
+                        queue.push( { shape , event } )
+
+                }break;
+                default :{
+
+                }break;
+            }
+        }
+        for(let i = 0 ; i < queue.length ; ++ i){
+            let shape = queue[i]['shape'];
+            let event = queue[i]['event'];
+            event.target = shape;
+            switch(event.Type){
+                case Event.MOUSE_PRESS_EVENT:{
+                    while(shape != null){
+                        event.path.push(shape);
+                        shape.trigger('press',event);
+                        shape = shape.parent;
+                    }
+                    
+                }break;
+                case Event.MOUSE_MOVE_EVENT:{
+                    while(shape != null){
+                        event.path.push(shape);
+                        shape.trigger('move',event);
+                        shape = shape.parent;
+                    }
+                }break;
+                case Event.MOUSE_REALEASE_EVENT:{
+                    while(shape != null){
+                        event.path.push(shape);
+                        shape.trigger('release',event);
+                        shape = shape.parent;
+                    }
+                }break;
+                case Event.MOUSE_OVER_EVENT:{
+                    while(shape != null){
+                        event.path.push(shape);
+                        shape.trigger('over',event);
+                        shape = shape.parent;
+                    }
+                }break;
+                case Event.MOUSE_ENTER_EVENT:{
+                    while(shape != null){
+                        event.path.push(shape);
+                        shape.trigger('enter',event);
+                        shape = shape.parent;
+                    }
+                }break;
+                case Event.MOUSE_OUT_EVENT:{
+                    while(shape != null){
+                        event.path.push(shape);
+                        shape.trigger('out',event);
+                        shape = shape.parent;
+                    }
+                }break;
+            }
+        }
+        this.eventMgr = null;
     }
 
     render(){
@@ -48,13 +173,19 @@ export default class Painter extends Shape {
         this.pen.fillStyle = this.background;
         this.pen.fillRect(0,0,this.canvas.width , this.canvas.height)
         this.pen.restore();
-        this.drawShape(this.caches)
+        this.drawShape(this.caches);
+        // console.log(this.eventMgr)
+        if(this.eventMgr)
+            this.dispatchEvent();
     }
 
     cache(){
+
+        // 对shape做预处理，建立transform 和 shape的一个绘制队列
         // draw the shape
         let queue = [];
-        //recursive apply the drawShapes
+        // recursive apply the drawShapes
+        // the drawShapes function don't apply drawing operation
         let drawShapes = (transform,shape) => {
             // drawShape(transform,shape);
             let worldTransform = shape.getWorldMatrix(transform);
@@ -183,7 +314,8 @@ export default class Painter extends Shape {
         return invert.applyTransform(vec);
     }
 
-    checkout(name,e){
+    capture(name,e){
+        //用点击区域对shape做碰撞测试
         let screen = new Vector(e.x,e.y);
         let coord = this.invertTransform(screen);
         let isTouch = false;
@@ -195,37 +327,11 @@ export default class Painter extends Shape {
             
             let ev = {screen,coord};
 
-            switch(shape.Type){
-                case Shape.CIRCLE:{
-                    let [center,r] = shape.applyTransform(transform);
-                    
-                    let circle = {center,r};
-                    isTouch = isInCircle(screen,circle);
+            if(shape.draggable == true){
 
-                    if(isTouch){
-                        ev.target = shape;
-                        shape.trigger(name,ev);
-                        return;
-                    }
-
-                }break;
-                case Shape.LINE:{
-
-                }break;
-                case Shape.POLYGON:{
-                    let verts = shape.applyTransform(transform);
-                    isTouch = isInPolygon(screen,verts);
-
-                    if(isTouch){
-                        ev.target = shape;
-                        shape.trigger(name,ev);
-                        return;
-                    }
-                }break;
-                default :{
-
-                }break;
+                break;
             }
+
             
         }
     }

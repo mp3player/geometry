@@ -31,6 +31,14 @@ export default class Shape extends EventListener{
         this.parent = null;
     }   
 
+    hasChild(){
+        return this.children.length > 0;
+    }
+
+    hasParent(){
+        return this.pareent == null;
+    }
+
     add(shape){
         shape.parent = this;
         this.children.push(shape);
@@ -41,11 +49,11 @@ export default class Shape extends EventListener{
     }
 
     translate(x=0,y=0){
-        this.position = this.position.add(new Vector(x,y));
+        this.translation = this.translation.add(new Vector(x,y));
     }
 
-    setPosition(vec){
-        this.position = vec;
+    setTranslation(vec){
+        this.translation = vec;
     }
 
     rotate(r=0){
@@ -86,21 +94,15 @@ export default class Shape extends EventListener{
         
     }
 
-    trigger(eventName , e){
-        super.trigger(eventName,e);
-        if(DataType.isInstance(this.parent , Painter))
-            return ;
-        e.target = this.parent;
-        this.parent.trigger(eventName,e);
-    }
 
-
-    static      SHAPE       =   'shape';
-    static      PATH        =   'path';
-    static      LINE        =   'line';
-    static      POLYGON     =   'polygon';
-    static      CIRCLE      =   'circle';
-    static      CURVE       =   'curve';
-    static      RING        =   'ring';
-    static      RECTANGLE   =   'rectangle';
+    static      SHAPE               =   'shape';
+    static      PATH                =   'path';
+    static      LINE                =   'line';
+    static      POLYGON             =   'polygon';
+    static      CIRCLE              =   'circle';
+    static      CURVE               =   'curve';
+    static      RING                =   'ring';
+    static      RECTANGLE           =   'rectangle';
+    static      HELPER              =   'helper';
+    static      CONNECTION_HELPR    =   'connection_helper';
 }
